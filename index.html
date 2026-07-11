@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#THE-STANCE Tier List</title>
+    <title>#THE-STANCE Interactive Tier List & Comparison Engine</title>
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -20,6 +20,10 @@
             --d-tier: #ec4899;
             --e-tier: #f43f5e;
             --f-tier: #ef4444;
+
+            --status-good: #10b981;
+            --status-warn: #f59e0b;
+            --status-bad: #ef4444;
         }
 
         body {
@@ -34,6 +38,7 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
+            padding-top: 40px;
         }
 
         header {
@@ -59,6 +64,38 @@
             margin: 0;
         }
 
+        /* Comparison Notification Banner */
+        #compare-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to right, #1e40af, #6b21a8);
+            color: white;
+            text-align: center;
+            padding: 0.75rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            letter-spacing: 0.02em;
+        }
+
+        #compare-banner button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            margin-left: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        #compare-banner button:hover { background: rgba(255,255,255,0.3); }
+
         .tier-section {
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -79,13 +116,13 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .tier-header.s { background: linear-gradient(to right, rgba(245, 158, 11, 0.15), transparent); border-left: 6px solid var(--s-tier); color: var(--s-tier); }
-        .tier-header.a { background: linear-gradient(to right, rgba(168, 85, 247, 0.15), transparent); border-left: 6px solid var(--a-tier); color: var(--a-tier); }
-        .tier-header.b { background: linear-gradient(to right, rgba(59, 130, 246, 0.15), transparent); border-left: 6px solid var(--b-tier); color: var(--b-tier); }
-        .tier-header.c { background: linear-gradient(to right, rgba(16, 185, 129, 0.15), transparent); border-left: 6px solid var(--c-tier); color: var(--c-tier); }
-        .tier-header.d { background: linear-gradient(to right, rgba(236, 72, 153, 0.15), transparent); border-left: 6px solid var(--d-tier); color: var(--d-tier); }
-        .tier-header.e { background: linear-gradient(to right, rgba(244, 63, 94, 0.15), transparent); border-left: 6px solid var(--e-tier); color: var(--e-tier); }
-        .tier-header.f { background: linear-gradient(to right, rgba(239, 68, 68, 0.15), transparent); border-left: 6px solid var(--f-tier); color: var(--f-tier); }
+        .tier-header.s { border-left: 6px solid var(--s-tier); color: var(--s-tier); background: linear-gradient(to right, rgba(245, 158, 11, 0.05), transparent); }
+        .tier-header.a { border-left: 6px solid var(--a-tier); color: var(--a-tier); background: linear-gradient(to right, rgba(168, 85, 247, 0.05), transparent); }
+        .tier-header.b { border-left: 6px solid var(--b-tier); color: var(--b-tier); background: linear-gradient(to right, rgba(59, 130, 246, 0.05), transparent); }
+        .tier-header.c { border-left: 6px solid var(--c-tier); color: var(--c-tier); background: linear-gradient(to right, rgba(16, 185, 129, 0.05), transparent); }
+        .tier-header.d { border-left: 6px solid var(--d-tier); color: var(--d-tier); background: linear-gradient(to right, rgba(236, 72, 153, 0.05), transparent); }
+        .tier-header.e { border-left: 6px solid var(--e-tier); color: var(--e-tier); background: linear-gradient(to right, rgba(244, 63, 94, 0.05), transparent); }
+        .tier-header.f { border-left: 6px solid var(--f-tier); color: var(--f-tier); background: linear-gradient(to right, rgba(239, 68, 68, 0.05), transparent); }
 
         table {
             width: 100%;
@@ -103,18 +140,37 @@
             background-color: rgba(0, 0, 0, 0.1);
         }
 
+        .system-row {
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .system-row:hover td { background-color: rgba(255, 255, 255, 0.03); }
+
+        .system-row.active td {
+            background-color: rgba(255, 255, 255, 0.01);
+            border-bottom-color: transparent;
+        }
+
+        .system-row.compare-selected td {
+            background-color: rgba(245, 158, 11, 0.08) !important;
+            border-left: 4px solid var(--s-tier);
+        }
+
+        body.in-compare-mode .system-row:not(.compare-selected) {
+            animation: pulse-targets 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-targets {
+            0% { border-color: var(--border-color); }
+            50% { border-color: rgba(59, 130, 246, 0.3); }
+            100% { border-color: var(--border-color); }
+        }
+
         td {
             padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
             font-size: 0.95rem;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background-color: rgba(255, 255, 255, 0.02);
         }
 
         .rank {
@@ -138,68 +194,248 @@
         }
 
         .score-badge {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.04);
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-weight: 700;
             font-size: 0.9rem;
             display: inline-block;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .arrow-up {
-            color: #10b981;
+        .arrow-up { color: #10b981; font-size: 0.9rem; font-weight: 800; }
+        .console-tag { font-size: 0.7rem; background-color: #374151; color: #d1d5db; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 700; }
+        .handheld-tag { font-size: 0.7rem; background-color: #1e3a8a; color: #bfdbfe; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 700; }
+        .prebuilt-tag { font-size: 0.7rem; background-color: #7c2d12; color: #ffedd5; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 700; }
+
+        .details-row { display: none; }
+        .details-row.open { display: table-row; }
+
+        .details-container {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-card {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
             font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .upgrade-card {
+            grid-column: span 2;
+            background-color: rgba(59, 130, 246, 0.04);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .upgrade-content { flex-grow: 1; }
+
+        .upgrade-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #93c5fd;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .compare-trigger-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            align-self: flex-start;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            transition: background-color 0.15s ease;
+        }
+
+        .compare-trigger-btn:hover { background-color: #2563eb; }
+
+        .chevron {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+            margin-left: auto;
+        }
+
+        .system-row.active .chevron { transform: rotate(180deg); }
+
+        /* Modal Overlay Elements */
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(4, 6, 12, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            animation: modal-enter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modal-enter {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            background-color: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
             font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
 
-        .console-tag {
-            font-size: 0.7rem;
-            background-color: #374151;
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-close-btn:hover { color: white; }
+
+        .modal-body { padding: 1.5rem; }
+
+        .compare-head-to-head {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .compare-entity {
+            background-color: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .entity-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem; }
+        .entity-name { font-size: 1.2rem; font-weight: 800; color: white; }
+        .entity-score { font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem; color: var(--accent); }
+        .compare-vs { font-weight: 800; color: var(--text-muted); font-size: 0.9rem; }
+
+        .modal-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.25rem;
+        }
+
+        .modal-narrative {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
             color: #d1d5db;
-            padding: 0.1rem 0.4rem;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.05em;
         }
 
-        .handheld-tag {
-            font-size: 0.7rem;
-            background-color: #1e3a8a;
-            color: #bfdbfe;
-            padding: 0.1rem 0.4rem;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+        .modal-path-box {
+            background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.06), rgba(59, 130, 246, 0.06));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
         }
 
-        .prebuilt-tag {
-            font-size: 0.7rem;
-            background-color: #7c2d12;
-            color: #ffedd5;
-            padding: 0.1rem 0.4rem;
+        .part-pill {
+            display: inline-block;
+            background-color: #10b981;
+            color: #042f1a;
+            padding: 0.2rem 0.6rem;
             border-radius: 4px;
+            font-weight: 800;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+            font-family: ui-monospace, monospace;
+            margin-bottom: 0.5rem;
         }
 
-        @media (max-width: 640px) {
+        .part-description { font-size: 0.9rem; color: #e5e7eb; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .upgrade-card { grid-column: span 1; }
             body { padding: 1rem 0.5rem; }
-            th, td { padding: 0.75rem 0.75rem; }
-            .specs { font-size: 0.75rem; }
-            h1 { font-size: 1.75rem; }
+            th, td { padding: 0.75rem; }
+            .compare-head-to-head { grid-template-columns: 1fr; }
+            .compare-vs { margin: 0.25rem 0; }
         }
     </style>
 </head>
 <body>
 
+<div id="compare-banner">
+    Comparison Mode Active: Click any other build on the ladder to run the Upgrade Path metrics.
+    <button onclick="abortComparison()">Cancel</button>
+</div>
+
 <div class="container">
     <header>
         <h1>#THE-STANCE TIER LIST</h1>
-        <p class="subtitle">1080p/1440p Bottleneck Adjusted Rankings</p>
+        <p class="subtitle">1080p/1440p Bottleneck Adjusted Rankings — Click rows for system breakdowns</p>
     </header>
 
     <!-- S TIER -->
@@ -207,31 +443,77 @@
         <div class="tier-header s">S TIER — FLAGSHIP (80+)</div>
         <table>
             <thead>
-                <tr>
-                    <th class="rank">Rank</th>
-                    <th>Name</th>
-                    <th>Specs</th>
-                    <th style="text-align: right;">Score</th>
-                </tr>
+                <tr><th class="rank">Rank</th><th>Name</th><th>Specs</th><th style="text-align: right;">Score</th></tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="system-row" data-target="s-1" data-id="s-1" data-name="Dariush" data-cpu="Ryzen 9 9950X3D" data-gpu="RTX 5090" data-ram="64GB" data-score="100" data-platform="am5" data-cpu-tier="6">
                     <td class="rank">1</td>
-                    <td class="name-cell">Dariush</td>
+                    <td class="name-cell">Dariush <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 9 9950X3D - RTX 5090 - 64GB</td>
                     <td style="text-align: right;"><span class="score-badge">100</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="s-1">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">The limit does not exist, this is the 1%</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">4K Native Ultra / 144Hz+ Framerates</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> None exist<br><strong>Upgrade:</strong> None exist
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 's-1')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="s-2" data-id="s-2" data-name="JC" data-cpu="Ryzen 5700X3D" data-gpu="RTX 5080" data-ram="32GB" data-score="86" data-platform="am4-x3d" data-cpu-tier="4">
                     <td class="rank">2</td>
-                    <td class="name-cell">JC</td>
+                    <td class="name-cell">JC <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 5700X3D - RTX 5080 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">86</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="s-2">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">An exceptionally smart configuration that leverages 3D V-Cache to punch way above its socket's weight class.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p Ultra at 165Hz+ / 4K High at 90Hz+</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The machine is anchored to an older DDR4 AM4 motherboard platform.<br><strong>Upgrade:</strong> Since you are running a high-efficiency Ryzen 3D V-Cache CPU, keep your current setup exactly as it is until an entirely new motherboard and platform generation makes sense down the line.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 's-2')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="s-3" data-id="s-3" data-name="Satish" data-cpu="Ryzen 5800X" data-gpu="RTX 5070 Ti" data-ram="32GB" data-score="80" data-platform="am4" data-cpu-tier="2">
                     <td class="rank">3</td>
-                    <td class="name-cell">Satish</td>
+                    <td class="name-cell">Satish <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 5800X - RTX 5070 Ti - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">80</span></td>
+                </tr>
+                <tr class="details-row" id="s-3">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A powerhouse rig featuring serious next-gen rendering power, though trailing slightly in engine fluidity due to a standard cache layout.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p Maxed Out at 144Hz+ / 4K Medium at 60Hz+</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The standard Ryzen 5800X lacks specialized gaming cache, creating wider frame rate variances in heavy titles.<br><strong>Upgrade:</strong> Shifting to an X3D chip on this socket represents a modest, highly effective upgrade path to cleanly patch up your 1% lows and elevate baseline frame rates. Otherwise, if your current frame delivery is fully satisfactory, hold off on part swaps and look at a full PC upgrade in the future.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 's-3')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -242,49 +524,146 @@
         <div class="tier-header a">A TIER — HIGH END (60 - 79)</div>
         <table>
             <thead>
-                <tr>
-                    <th class="rank">Rank</th>
-                    <th>Name</th>
-                    <th>Specs</th>
-                    <th style="text-align: right;">Score</th>
-                </tr>
+                <tr><th class="rank">Rank</th><th>Name</th><th>Specs</th><th style="text-align: right;">Score</th></tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="system-row" data-target="a-4" data-id="a-4" data-name="Tayles" data-cpu="Ryzen 7 7800X3D" data-gpu="RTX 5070" data-ram="32GB" data-score="78" data-platform="am5-x3d" data-cpu-tier="5">
                     <td class="rank">4</td>
-                    <td class="name-cell">Tayles <span class="arrow-up">▲</span></td>
+                    <td class="name-cell">Tayles <span class="arrow-up">▲</span> <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 7 7800X3D - RTX 5070 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge" style="border-color: var(--a-tier);">78</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="a-4">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">An elite gaming combination that maps the world's finest gaming processor directly to next-gen architectural features.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p Uncapped at 165Hz-240Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The only minor limit is the 12GB graphics memory allocation pool in extreme future asset environments.<br><strong>Upgrade:</strong> Because your Ryzen AM5 setup is already highly modern and future-proof, your path is simple: upgrade exclusively to an 80 or 90-class graphics card when your frame targets call for it.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'a-4')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="a-5" data-id="a-5" data-name="Reilly" data-cpu="Ryzen 5800X" data-gpu="RTX 5070" data-ram="32GB" data-score="74" data-platform="am4" data-cpu-tier="2">
                     <td class="rank">5</td>
-                    <td class="name-cell">Reilly</td>
+                    <td class="name-cell">Reilly <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 5800X - RTX 5070 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">74</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="a-5">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A balanced high-end machine with excellent visual capabilities, sitting right on the cusp of top-tier frame deliveries.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p High/Ultra at 120Hz-144Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The standard Ryzen 5800X lacks the unified gaming cache needed to smooth out dense, asset-heavy engine code.<br><strong>Upgrade:</strong> A modest upgrade would be to step up to an AM4 X3D chip to cleanly optimize your 1% lows and secure maximum frame rates. However, if you are satisfied with your current performance, skip the drop-in chip and look at a full PC upgrade in the future.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'a-5')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="a-6" data-id="a-6" data-name="Riaz Desk" data-cpu="Ryzen 5800X3D" data-gpu="RTX 3080 Ti" data-ram="32GB" data-score="68" data-platform="am4-x3d" data-cpu-tier="4">
                     <td class="rank">6</td>
-                    <td class="name-cell">Riaz Desk</td>
+                    <td class="name-cell">Riaz Desk <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 5800X3D - RTX 3080 Ti - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">68</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="a-6">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">The absolute golden ratio for custom hardware, utilizing wide flagship bus widths to maximize raw rendering velocity.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p Native Ultra at 100Hz-144Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The 12GB frame buffer is beginning to face tight parameters in unoptimized next-gen texture pools.<br><strong>Upgrade:</strong> Since you already own the definitive gaming Ryzen chip for your socket, look exclusively at a graphics card jump to a retail RTX 5070 Ti or higher down the line before touching the core system.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'a-6')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="a-7" data-id="a-7" data-name="Kumaa" data-cpu="i9-9900K" data-gpu="RTX 3080 Ti" data-ram="32GB" data-score="65" data-platform="intel-9th" data-cpu-tier="2">
                     <td class="rank">7</td>
-                    <td class="name-cell">Kumaa</td>
+                    <td class="name-cell">Kumaa <span class="chevron">▼</span></td>
                     <td class="specs">i9-9900K - RTX 3080 Ti - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">65</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="a-7">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A legacy flagship build that maintains rock-solid timing thresholds through an ultra-low internal ring-bus architecture.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p High at 90Hz-120Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The motherboard platform is entirely dead, restricting communications to older PCIe Gen 3 data ceilings.<br><strong>Upgrade:</strong> Keep running this well-balanced combination exactly as it is until it no longer satisfies your frame targets, then execute a complete platform jump.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'a-7')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="a-8" data-id="a-8" data-name="Riaz TV" data-cpu="Ryzen 5700X3D" data-gpu="RTX 3080" data-ram="32GB" data-score="64" data-platform="am4-x3d" data-cpu-tier="4">
                     <td class="rank">8</td>
-                    <td class="name-cell">Riaz TV</td>
+                    <td class="name-cell">Riaz TV <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 5700X3D - RTX 3080 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">64</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="a-8">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">An excellent living room media setup utilizing high structural cache values to smooth out frame delivery on large displays.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p High at 90Hz-120Hz / 4K Scaling at 60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The 10GB graphics memory buffer is running into strict limits when attempting to push higher resolution targets.<br><strong>Upgrade:</strong> Your Ryzen 3D V-Cache processor is already highly optimized; look to cascade a higher-tier card (like a 3080 Ti or 5070 Ti) into this setup down the line before considering a full PC overhaul.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'a-8')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="a-9" data-id="a-9" data-name="Jake" data-cpu="Ryzen 3600X" data-gpu="RTX 5070" data-ram="16GB" data-score="62" data-platform="am4-3000" data-cpu-tier="1">
                     <td class="rank">9</td>
-                    <td class="name-cell">Jake</td>
+                    <td class="name-cell">Jake <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 3600X - RTX 5070 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">62</span></td>
+                </tr>
+                <tr class="details-row" id="a-9">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A classic lopsided combination where a powerful next-generation GPU is severely reined in by an aging data core.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p Medium-High at 60Hz-90Hz (Heavy Stuttering)</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> High multi-die delays and an aging Ryzen 3000 architecture completely choke your next-gen graphics card.<br><strong>Upgrade:</strong> Moving from a Ryzen 3000 series chip to a Ryzen 5000 X3D model is highly encouraged and will yield a much bigger performance leap for you than for someone already on Ryzen 5000 non-X3D. Swapping just the CPU is a vastly cheaper alternative to a full PC rebuild and will instantly stabilize your choppy 1% lows. If you are entirely satisfied with your current performance, however, you can skip the chip and save up for a full platform overhaul in the future.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'a-9')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -295,49 +674,146 @@
         <div class="tier-header b">B TIER — SOLID MID-RANGE (40 - 59)</div>
         <table>
             <thead>
-                <tr>
-                    <th class="rank">Rank</th>
-                    <th>Name</th>
-                    <th>Specs</th>
-                    <th style="text-align: right;">Score</th>
-                </tr>
+                <tr><th class="rank">Rank</th><th>Name</th><th>Specs</th><th style="text-align: right;">Score</th></tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="system-row" data-target="b-10" data-id="b-10" data-name="Kyle" data-cpu="Ryzen 5600X" data-gpu="RTX 3080" data-ram="16GB" data-score="58" data-platform="am4" data-cpu-tier="2">
                     <td class="rank">10</td>
-                    <td class="name-cell">Kyle</td>
+                    <td class="name-cell">Kyle <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 5600X - RTX 3080 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">58</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="b-10">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A smart, capable assembly that handles standard resolutions well, though limited by background asset allocation lines.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p Mid-High at 80Hz-110Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The 16GB system memory boundary forces aggressive background asset swap paging in modern title spaces.<br><strong>Upgrade:</strong> A highly practical, modest path forward is upgrading to an X3D chip to stabilize your 1% lows and elevate baseline frame rates. If you are entirely content with how your library plays right now, ride it out until you can pull the trigger on a full PC upgrade later.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'b-10')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="b-11" data-id="b-11" data-name="Blake" data-cpu="Ryzen 3900X" data-gpu="RTX 3080" data-ram="32GB" data-score="55" data-platform="am4-3000" data-cpu-tier="1">
                     <td class="rank">11</td>
-                    <td class="name-cell">Blake</td>
+                    <td class="name-cell">Blake <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 3900X - RTX 3080 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">55</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="b-11">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A respectable production setup that meets friction in gaming due to split internal chiplet execution paths.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1440p Medium-High at 75Hz-100Hz (Uneven Pacing)</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Legacy Zen 2 multi-die architecture inserts internal timing delays that cause modern gameplay micro-stutters.<br><strong>Upgrade:</strong> Sinking money into a gaming-focused Ryzen 5000 X3D processor is strongly encouraged for you; because you are jumping from the 3000 series, you will see a much more transformative leap than a user moving from a standard 5000 series chip. Upgrading just the CPU is an incredibly cheap alternative compared to a full PC rebuild and will perfectly iron out your 1% lows. If you're content with the dual-purpose speed right now, bypass the swap and look at a complete system overhaul down the line.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'b-11')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="b-12" data-id="b-12" data-name="Dylan" data-cpu="Ryzen 7 7700X" data-gpu="RTX 3070 Ti" data-ram="32GB" data-score="54" data-platform="am5" data-cpu-tier="3">
                     <td class="rank">12</td>
-                    <td class="name-cell">Dylan</td>
-                    <td class="specs">Ryzen 7700X - RTX 3070 Ti - 32GB</td>
+                    <td class="name-cell">Dylan <span class="chevron">▼</span></td>
+                    <td class="specs">Ryzen 7 7700X - RTX 3070 Ti - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">54</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="b-12">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A fast, high-end contemporary motherboard platform that is entirely handcuffed by a starved graphical memory buffer.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p Maxed at 144Hz+ / 1440p Medium at 60Hz-90Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The tight 8GB VRAM pool hits an immediate wall and hitches severely when modern game textures overflow.<br><strong>Upgrade:</strong> A modest platform upgrade would be to step up to an AM5 X3D processor to cleanly optimize your 1% lows and secure maximum frame rates. However, if your current frame delivery is satisfactory, hold off on part swaps and plan out a full scale PC update down the line.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'b-12')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="b-13" data-id="b-13" data-name="PlayStation 5 Pro" data-cpu="Zen 2 locked" data-gpu="RTX 3070 Ti Custom" data-ram="16GB" data-score="48" data-platform="console" data-cpu-tier="0">
                     <td class="rank">13</td>
-                    <td class="name-cell">PlayStation 5 Pro <span class="console-tag">Console</span></td>
+                    <td class="name-cell">PlayStation 5 Pro <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 3070 Ti / RX 6800 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">48</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="b-13">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A custom dedicated gaming console leveraging integrated AI upscaling matrices and large unified resource pools.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">4K PSSR AI Upscaled at a stable 60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Bound permanently to an optimized but locked system environment with fixed execution limitations.<br><strong>Upgrade:</strong> No internal configuration upgrades are possible on this machine type.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'b-13')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="b-14" data-id="b-14" data-name="Ravin" data-cpu="Ryzen 5700X3D" data-gpu="RTX 3060 Ti" data-ram="16GB" data-score="45" data-platform="am4-x3d" data-cpu-tier="4">
                     <td class="rank">14</td>
-                    <td class="name-cell">Ravin</td>
+                    <td class="name-cell">Ravin <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 5700X3D - RTX 3060 Ti - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">45</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="b-14">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A highly optimized competitive build prioritizing smooth minimum frame windows over brute-force pixel layout displays.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p Maxed Competitive at 144Hz+</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The mid-range graphics core and 16GB system RAM cap performance ceilings as resolutions lift.<br><strong>Upgrade:</strong> Your Ryzen 3D V-Cache processing chip is already top-tier for gaming; simply expand to 32GB of RAM and swap out your GPU for a modern 12GB+ variant down the line to jump to 1440p easily.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'b-14')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="b-15" data-id="b-15" data-name="John" data-cpu="i9-9900" data-gpu="RTX 3060 Ti" data-ram="32GB" data-score="42" data-platform="intel-9th" data-cpu-tier="2">
                     <td class="rank">15</td>
-                    <td class="name-cell">John</td>
+                    <td class="name-cell">John <span class="chevron">▼</span></td>
                     <td class="specs">i9-9900 - RTX 3060 Ti - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">42</span></td>
+                </tr>
+                <tr class="details-row" id="b-15">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">An exceptionally well-balanced legacy machine extracting maximum possible performance out of its graphics layout.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p High at 100Hz+ / 1440p Medium at 60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Locked behind an 8GB GPU memory allocation ceiling and an aging socket with zero internal chip upgrade vectors left.<br><strong>Upgrade:</strong> Leave this build perfectly unchanged until it no longer runs your library, then transition through a full platform and graphics update simultaneously.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'b-15')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -348,43 +824,123 @@
         <div class="tier-header c">C TIER — TARGET CURRENT GEN (30 - 39)</div>
         <table>
             <thead>
-                <tr>
-                    <th class="rank">Rank</th>
-                    <th>Name</th>
-                    <th>Specs</th>
-                    <th style="text-align: right;">Score</th>
-                </tr>
+                <tr><th class="rank">Rank</th><th>Name</th><th>Specs</th><th style="text-align: right;">Score</th></tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="system-row" data-target="c-16" data-id="c-16" data-name="Pawan" data-cpu="Ryzen 5 5500" data-gpu="RTX 2080 Super" data-ram="16GB" data-score="36" data-platform="am4" data-cpu-tier="2">
                     <td class="rank">16</td>
-                    <td class="name-cell">Pawan</td>
+                    <td class="name-cell">Pawan <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 5 5500 - RTX 2080 Super - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">36</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="c-16">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A budget-focused entry build matching a cut-down silicon cache processor with capable, older flagship hardware graphics.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p Medium-High at 60Hz-90Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> The Ryzen 5500 features a heavily halved L3 cache layer that holds back engine data tracking speeds.<br><strong>Upgrade:</strong> Executing a modest drop-in upgrade to an X3D chip will beautifully fix your 1% lows and boost your active frame rates. If you are entirely satisfied with your current performance, though, keep your cash and map out a full PC upgrade in the future.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'c-16')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="c-17" data-id="c-17" data-name="Alan" data-cpu="Ryzen 3600" data-gpu="RTX 2080 Super" data-ram="16GB" data-score="36" data-platform="am4-3000" data-cpu-tier="1">
                     <td class="rank">17</td>
-                    <td class="name-cell">Alan</td>
+                    <td class="name-cell">Alan <span class="chevron">▼</span></td>
                     <td class="specs">Ryzen 3600 - RTX 2080 Super - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">36</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="c-17">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A classic, aging entry-level combination that faces clear resource friction inside modern game engine spaces.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p Medium at 60Hz-80Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Older Zen 2 instruction speeds cap the data delivery velocity required by contemporary games.<br><strong>Upgrade:</strong> Sinking a bit of cash into a Ryzen 5000 X3D chip is highly recommended for your system. Because you're stepping up from the 3000 series, you get both a generation jump and a cache explosion, making it a much better performance scaling value than for a regular Ryzen 5000 user. Upgrading just the processor is an incredibly cheap alternative to a full PC rebuild and will perfectly stabilize your 1% frame drops. If you are content with your performance targets right now, though, ride it out until you can buy an entirely new PC later.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'c-17')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="c-18" data-id="c-18" data-name="PlayStation 5" data-cpu="Zen 2 Custom" data-gpu="RTX 2070 Super Custom" data-ram="16GB" data-score="31" data-platform="console" data-cpu-tier="0">
                     <td class="rank">18=</td>
-                    <td class="name-cell">PlayStation 5 <span class="console-tag">Console</span></td>
+                    <td class="name-cell">PlayStation 5 <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 2070 Super / 2080 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">31</span></td>
                 </tr>
-                <tr>
-                    <td class="rank">18=</td>
-                    <td class="name-cell">Xbox Series X <span class="console-tag">Console</span></td>
+                <tr class="details-row" id="c-18">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">Baseline current-generation console hardware managing stable, uniform output metrics across modern shared platforms.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">4K Dynamic Upscaled at 30Hz-60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Closed operational eco-system lacking any customizable processing components.<br><strong>Upgrade:</strong> Component configuration modifications are entirely locked out.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'c-18')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="c-19" data-id="c-19" data-name="Xbox Series X" data-cpu="Zen 2 Custom" data-gpu="RTX 2080 Custom" data-ram="16GB" data-score="31" data-platform="console" data-cpu-tier="0">
+                    <td class="rank">19</td>
+                    <td class="name-cell">Xbox Series X <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 2070 Super / 2080 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">31</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="c-19">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">Standard high-capacity console ecosystem tracking consistent baseline frame parameters across standardized game ports.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">4K Dynamic Upscaled at 30Hz-60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Static hardware block preventing custom feature or performance optimization steps.<br><strong>Upgrade:</strong> Consumer component upgrade paths do not exist.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'c-19')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="c-20" data-id="c-20" data-name="Steam Machine" data-cpu="Zen 4 Custom" data-gpu="RDNA 3 Custom" data-ram="16GB" data-score="30" data-platform="prebuilt" data-cpu-tier="0">
                     <td class="rank">20</td>
-                    <td class="name-cell">Steam Machine <span class="console-tag">Prebuilt</span></td>
+                    <td class="name-cell">Steam Machine <span class="prebuilt-tag">Prebuilt</span> <span class="chevron">▼</span></td>
                     <td class="specs">Semi-custom Zen 4 - Semi-custom RDNA 3 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">30</span></td>
+                </tr>
+                <tr class="details-row" id="c-20">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A compact small-form-factor prebuilt ecosystem trading raw frame velocity parameters for system efficiency and living room comfort.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p Medium at a stable 60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Highly proprietary physical dimensions and locked core system logic constraints.<br><strong>Upgrade:</strong> Completely non-modular configuration parameters; requires a shift to a standard desktop PC model to move up tiers.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'c-20')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -395,31 +951,77 @@
         <div class="tier-header d">D TIER — LOW END CURRENT GEN (14 - 29)</div>
         <table>
             <thead>
-                <tr>
-                    <th class="rank">Rank</th>
-                    <th>Name</th>
-                    <th>Specs</th>
-                    <th style="text-align: right;">Score</th>
-                </tr>
+                <tr><th class="rank">Rank</th><th>Name</th><th>Specs</th><th style="text-align: right;">Score</th></tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="system-row" data-target="d-21" data-id="d-21" data-name="Amila" data-cpu="i7-8086K" data-gpu="GTX 1080" data-ram="32GB" data-score="20" data-platform="legacy-intel" data-cpu-tier="1">
                     <td class="rank">21</td>
-                    <td class="name-cell">Amila</td>
+                    <td class="name-cell">Amila <span class="chevron">▼</span></td>
                     <td class="specs">i7-8086K - GTX 1080 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">20</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="d-21">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A legendary historic configuration that has officially run completely out of modern feature and API software parameters.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p Medium-Low at 45Hz-60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Total absence of contemporary driver features like DLSS upscaling, mesh shaders, and hardware ray tracing support.<br><strong>Upgrade:</strong> The platform is completely maxed and obsolete; advancing requires building an entirely new custom computer.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'd-21')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="d-22" data-id="d-22" data-name="Xbox Series S" data-cpu="Zen 2 Custom" data-gpu="GTX 1650S Custom" data-ram="10GB" data-score="15" data-platform="console" data-cpu-tier="0">
                     <td class="rank">22</td>
-                    <td class="name-cell">Xbox Series S <span class="console-tag">Console</span></td>
+                    <td class="name-cell">Xbox Series S <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Zen 2 locked (~ 3700X) - ~ GTX 1650 Super - 10GB</td>
                     <td style="text-align: right;"><span class="score-badge">15</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="d-22">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">An entry-gate contemporary console layout engineered specifically to access modern digital catalogs at cut-down parameters.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p Dynamic Scaling at 30Hz-60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Strict internal 10GB systemic memory pools compress current game textures down heavily.<br><strong>Upgrade:</strong> Completely locked console system; hardware modification vectors do not exist.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'd-22')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="d-23" data-id="d-23" data-name="Nintendo Switch 2" data-cpu="ARM Cortex A78C" data-gpu="GTX 1050 Ti Custom" data-ram="12GB" data-score="14" data-platform="console" data-cpu-tier="0">
                     <td class="rank">23</td>
-                    <td class="name-cell">Nintendo Switch 2 <span class="console-tag">Console</span></td>
+                    <td class="name-cell">Nintendo Switch 2 <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">ARM Cortex A78C - ~ GTX 1050 Ti + DLSS - 12GB</td>
                     <td style="text-align: right;"><span class="score-badge">14</span></td>
+                </tr>
+                <tr class="details-row" id="d-23">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A cutting-edge hybrid mobile layout leveraging integrated neural networks to punch above its hardware size.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p AI Upscaled Mobile Target at 30Hz-60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Encapsulated inside low-power battery efficiency envelopes that cap thermal performance ceilings.<br><strong>Upgrade:</strong> Fixed proprietary system environment; no custom upgrades are supported.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'd-23')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -430,37 +1032,100 @@
         <div class="tier-header e">E TIER — ABSOLUTE MINIMUM (8 - 13)</div>
         <table>
             <thead>
-                <tr>
-                    <th class="rank">Rank</th>
-                    <th>Name</th>
-                    <th>Specs</th>
-                    <th style="text-align: right;">Score</th>
-                </tr>
+                <tr><th class="rank">Rank</th><th>Name</th><th>Specs</th><th style="text-align: right;">Score</th></tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="system-row" data-target="e-24" data-id="e-24" data-name="Xbox One X" data-cpu="Jaguar 8-Core" data-gpu="RX 580 Custom" data-ram="12GB" data-score="13" data-platform="console" data-cpu-tier="0">
                     <td class="rank">24</td>
-                    <td class="name-cell">Xbox One X <span class="console-tag">Console</span></td>
+                    <td class="name-cell">Xbox One X <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Jaguar 8-core - ~ RX 580 - HDD - 12GB</td>
                     <td style="text-align: right;"><span class="score-badge">13</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="e-24">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">The peak of last-generation console layouts, now completely starved by antiquated processing pipelines and storage lines.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">4K Legacy Titles / 1080p Low at 30Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Mechanical hard drives and ancient mobile architectures completely bar access to modern game releases.<br><strong>Upgrade:</strong> Swapping to a manual internal SSD improves UI snap, but navigating current games requires replacing the box entirely.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'e-24')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="e-25" data-id="e-25" data-name="PlayStation 4 Pro" data-cpu="Jaguar 8-Core" data-gpu="GTX 1060 Custom" data-ram="8GB" data-score="10" data-platform="console" data-cpu-tier="0">
                     <td class="rank">25</td>
-                    <td class="name-cell">PlayStation 4 Pro <span class="console-tag">Console</span></td>
+                    <td class="name-cell">PlayStation 4 Pro <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Jaguar 8-core - ~ RX 470 / GTX 1060 - HDD - 8GB</td>
                     <td style="text-align: right;"><span class="score-badge">10</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="e-25">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">An aging mid-gen legacy machine that has been fully abandoned by modern game engines.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">1080p-1440p Legacy Dynamic at 30Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Ancient mechanical asset streaming lines choke modern file systems instantly.<br><strong>Upgrade:</strong> Obsolescence is absolute; requires a complete system change to modern platforms to access current generation software.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'e-25')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="e-26" data-id="e-26" data-name="MSI Claw 8 AI+" data-cpu="Core Ultra 7 258V" data-gpu="Arc 140V" data-ram="32GB" data-score="10" data-platform="handheld" data-cpu-tier="0">
                     <td class="rank">26</td>
-                    <td class="name-cell">MSI Claw 8 AI+ <span class="handheld-tag">Handheld</span></td>
+                    <td class="name-cell">MSI Claw 8 AI+ <span class="handheld-tag">Handheld</span> <span class="chevron">▼</span></td>
                     <td class="specs">Core Ultra 7 258V - Arc 140V - 32GB shared</td>
                     <td style="text-align: right;"><span class="score-badge">10</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="e-26">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A modern mobile configuration facing significant deployment optimization friction across its specialized architecture lines.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">800p/1080p Low at 40Hz-60Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Mobile integrated silicon bounds prevent independent physical component scaling step changes.<br><strong>Upgrade:</strong> Non-modular hardware setup; relies entirely on official brand driver optimization packages to smooth out performance profiles.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'e-26')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="e-27" data-id="e-27" data-name="Steam Deck" data-cpu="Zen 2 Custom" data-gpu="GTX 1050 Ti Custom" data-ram="16GB" data-score="8" data-platform="handheld" data-cpu-tier="0">
                     <td class="rank">27</td>
-                    <td class="name-cell">Steam Deck <span class="handheld-tag">Handheld</span></td>
+                    <td class="name-cell">Steam Deck <span class="handheld-tag">Handheld</span> <span class="chevron">▼</span></td>
                     <td class="specs">Zen 2 4-core - ~ GTX 1050 Ti - 16GB shared - 800p</td>
                     <td style="text-align: right;"><span class="score-badge">8</span></td>
+                </tr>
+                <tr class="details-row" id="e-27">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A beautifully optimized handheld framework built specifically to squeeze maximum efficiency out of a low-wattage layout.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">720p/800p Native Low at 30Hz-45Hz</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Compact physical battery restrictions clamp raw computational ceiling sizes permanently.<br><strong>Upgrade:</strong> Intended strictly as a portable layout; increasing gaming headroom targets requires moving to a separate custom desktop configuration.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'e-27')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -471,42 +1136,329 @@
         <div class="tier-header f">F TIER — NEEDS AN UPGRADE (0 - 7)</div>
         <table>
             <thead>
-                <tr>
-                    <th class="rank">Rank</th>
-                    <th>Name</th>
-                    <th>Specs</th>
-                    <th style="text-align: right;">Score</th>
-                </tr>
+                <tr><th class="rank">Rank</th><th>Name</th><th>Specs</th><th style="text-align: right;">Score</th></tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="system-row" data-target="f-28" data-id="f-28" data-name="PlayStation 4" data-cpu="Jaguar 8-Core" data-gpu="HD 7850 Custom" data-ram="8GB" data-score="7" data-platform="console" data-cpu-tier="0">
                     <td class="rank">28</td>
-                    <td class="name-cell">PlayStation 4 <span class="console-tag">Console</span></td>
+                    <td class="name-cell">PlayStation 4 <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Jaguar 8-core - ~ GTX 750 Ti / GTX 1050 - HDD - 8GB</td>
                     <td style="text-align: right;"><span class="score-badge">7</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="f-28">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">Baseline last-generation base console hardware that has reached complete system lifecycle termination.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">720p-900p Low at 25Hz-30Hz Legacy Only</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Wholly obsolete processing architecture completely dropped by current software creators.<br><strong>Upgrade:</strong> Non-upgradable layout; requires a complete replacement with current-generation computing frameworks.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'f-28')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="f-29" data-id="f-29" data-name="Xbox One S" data-cpu="Jaguar 8-Core" data-gpu="HD 7790 Custom" data-ram="8GB" data-score="5" data-platform="console" data-cpu-tier="0">
                     <td class="rank">29</td>
-                    <td class="name-cell">Xbox One S <span class="console-tag">Console</span></td>
+                    <td class="name-cell">Xbox One S <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Jaguar 8-core - ~ HD 7790 - HDD - 8GB</td>
                     <td style="text-align: right;"><span class="score-badge">5</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="f-29">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">A legacy entry box completely unsupported by current engine architectures.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">720p Low at 25Hz-30Hz Legacy Only</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Ancient graphics and computation systems freeze up on modern code patterns.<br><strong>Upgrade:</strong> Hardware changes are fully restricted; necessitates transitioning completely to modern digital hardware blocks.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'f-29')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="f-30" data-id="f-30" data-name="Xbox One" data-cpu="Jaguar 8-Core" data-gpu="HD 7770 Custom" data-ram="8GB" data-score="4" data-platform="console" data-cpu-tier="0">
                     <td class="rank">30</td>
-                    <td class="name-cell">Xbox One <span class="console-tag">Console</span></td>
+                    <td class="name-cell">Xbox One <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Jaguar 8-core - ~ HD 7770 / GTX 750 - HDD - 8GB</td>
                     <td style="text-align: right;"><span class="score-badge">4</span></td>
                 </tr>
-                <tr>
+                <tr class="details-row" id="f-30">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">The base 2013 launch model console, currently non-functional for modern gaming catalogs.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">720p Low at 20Hz-30Hz Legacy Only</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Obsolete architecture lines cannot decode or parse modern software parameters.<br><strong>Upgrade:</strong> Zero customization channels; require migrating entirely to current-generation machine builds.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'f-30')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="system-row" data-target="f-31" data-id="f-31" data-name="Nintendo Switch" data-cpu="Tegra X1" data-gpu="Maxwell 256 Cores" data-ram="4GB" data-score="3" data-platform="console" data-cpu-tier="0">
                     <td class="rank">31</td>
-                    <td class="name-cell">Nintendo Switch <span class="console-tag">Console</span></td>
+                    <td class="name-cell">Nintendo Switch <span class="console-tag">Console</span> <span class="chevron">▼</span></td>
                     <td class="specs">Tegra X1 - 256 Maxwell cores - 4GB - 720p docked</td>
                     <td style="text-align: right;"><span class="score-badge">3</span></td>
+                </tr>
+                <tr class="details-row" id="f-31">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">An exceptionally successful mobile architecture that has reached the absolute physical limit of its engine parameters.</div></div>
+                                <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">720p Docked / 540p Portable at 30Hz Baseline</div></div>
+                                <div class="upgrade-card">
+                                    <div class="upgrade-content">
+                                        <div class="upgrade-title">Upgrade Path</div>
+                                        <strong>Downside:</strong> Severely limited 4GB system memory array completely chokes on contemporary software logic.<br><strong>Upgrade:</strong> Fixed, enclosed mobile console environment; scaling up requires a full upgrade to a next-generation platform block.
+                                    </div>
+                                    <button class="compare-trigger-btn" onclick="initiateComparison(event, 'f-31')">Upgrade Comparison</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Comparison Engine Modal Popup Overlay -->
+<div id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">Upgrade Comparison Metrics</div>
+            <button class="modal-close-btn" onclick="closeModal(null)">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="compare-head-to-head">
+                <div class="compare-entity">
+                    <div class="entity-label" id="low-label">Lower Build</div>
+                    <div class="entity-name" id="low-name">--</div>
+                    <div class="entity-score" id="low-score">0</div>
+                </div>
+                <div class="compare-vs">VS</div>
+                <div class="compare-entity">
+                    <div class="entity-label" id="high-label">Target Build</div>
+                    <div class="entity-name" id="high-name">--</div>
+                    <div class="entity-score" id="high-score">0</div>
+                </div>
+            </div>
+
+            <div class="modal-section-title">Performance Gap Profile</div>
+            <div class="modal-narrative" id="comparison-narrative">--</div>
+
+            <div class="modal-section-title">Leapfrog Upgrade Path</div>
+            <div class="modal-path-box">
+                <div id="target-parts-container">
+                    <span class="part-pill" id="target-cpu-pill">CPU: --</span>
+                    <span class="part-pill" id="target-gpu-pill" style="background-color: #3b82f6; color: #0f172a; margin-left: 0.25rem;">GPU: --</span>
+                </div>
+                <div class="part-description" id="path-execution-details">--</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isCompareMode = false;
+    let selectedFirstId = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const rows = document.querySelectorAll('.system-row');
+        rows.forEach(row => {
+            row.addEventListener('click', () => {
+                const rowId = row.getAttribute('data-id');
+                
+                if (isCompareMode) {
+                    if (rowId === selectedFirstId) return; // Prevent self-comparison
+                    executeComparison(selectedFirstId, rowId);
+                    return;
+                }
+
+                // Standard Toggle Layout
+                const targetId = row.getAttribute('data-target');
+                const detailsRow = document.getElementById(targetId);
+                if (detailsRow) {
+                    const isOpen = detailsRow.classList.contains('open');
+                    document.querySelectorAll('.details-row').forEach(el => el.classList.remove('open'));
+                    document.querySelectorAll('.system-row').forEach(el => el.classList.remove('active'));
+                    if (!isOpen) {
+                        detailsRow.classList.add('open');
+                        row.classList.add('active');
+                    }
+                }
+            });
+        });
+    });
+
+    function initiateComparison(event, rowId) {
+        event.stopPropagation();
+        isCompareMode = true;
+        selectedFirstId = rowId;
+        
+        document.body.classList.add('in-compare-mode');
+        document.getElementById('compare-banner').style.display = 'block';
+        
+        document.querySelectorAll('.system-row').forEach(el => el.classList.remove('compare-selected'));
+        document.querySelector(`[data-id="${rowId}"]`).classList.add('compare-selected');
+        document.querySelectorAll('.details-row').forEach(el => el.classList.remove('open'));
+    }
+
+    function abortComparison() {
+        isCompareMode = false;
+        selectedFirstId = null;
+        document.body.classList.remove('in-compare-mode');
+        document.getElementById('compare-banner').style.display = 'none';
+        document.querySelectorAll('.system-row').forEach(el => el.classList.remove('compare-selected'));
+    }
+
+    function executeComparison(idA, idB) {
+        const rowA = document.querySelector(`[data-id="${idA}"]`);
+        const rowB = document.querySelector(`[data-id="${idB}"]`);
+        
+        const scoreA = parseInt(rowA.getAttribute('data-score'));
+        const scoreB = parseInt(rowB.getAttribute('data-score'));
+        
+        const lowEl = scoreA <= scoreB ? rowA : rowB;
+        const highEl = scoreA > scoreB ? rowA : rowB;
+
+        const data = {
+            lowName: lowEl.getAttribute('data-name'),
+            lowScore: parseInt(lowEl.getAttribute('data-score')),
+            lowCpu: lowEl.getAttribute('data-cpu'),
+            lowGpu: lowEl.getAttribute('data-gpu'),
+            lowPlatform: lowEl.getAttribute('data-platform'),
+            lowCpuTier: parseInt(lowEl.getAttribute('data-cpu-tier')),
+            highName: highEl.getAttribute('data-name'),
+            highScore: parseInt(highEl.getAttribute('data-score')),
+            highCpu: highEl.getAttribute('data-cpu'),
+            highGpu: highEl.getAttribute('data-gpu'),
+            highPlatform: highEl.getAttribute('data-platform'),
+            highCpuTier: parseInt(highEl.getAttribute('data-cpu-tier'))
+        };
+
+        document.getElementById('low-name').innerText = data.lowName;
+        document.getElementById('low-score').innerText = data.lowScore;
+        document.getElementById('high-name').innerText = data.highName;
+        document.getElementById('high-score').innerText = data.highScore;
+
+        if (data.lowName === data.highName) {
+            document.getElementById('comparison-narrative').innerHTML = `Both systems run identical underlying core rendering parameters. There is no biological performance gap between these units.`;
+            setCpuPillPassive(`Keep Current`);
+            document.getElementById('target-gpu-pill').innerText = `GPU: Keep Current`;
+            document.getElementById('path-execution-details').innerText = `To eclipse this structural tie, deploy a slight processing overclock to outpace your mirror target.`;
+            openModal();
+            abortComparison();
+            return;
+        }
+
+        const gap = data.highScore - data.lowScore;
+        let narrative = `<strong>${data.lowName}</strong> faces a score deficit of <strong>${gap} points</strong> behind <strong>${data.highName}</strong>. `;
+        
+        if (data.lowPlatform === 'console' || data.lowPlatform === 'handheld') {
+            narrative += `This performance delta is a structural variable of comparing a closed sandboxed mobile/console ecosystem directly to unlocked custom desktop components.`;
+        } else {
+            narrative += `The performance variance stems from <strong>${data.highName}'s</strong> use of higher bandwidth processing architectures, which provide greater resource overhead to maximize graphics pipeline efficiency.`;
+        }
+        document.getElementById('comparison-narrative').innerHTML = narrative;
+
+        let recCpu = "";
+        let recGpu = "";
+        let executionText = "";
+
+        // Evaluates whether the lower-ranked user already has an equal/better gaming CPU than the target
+        if (data.lowCpuTier >= data.highCpuTier && data.lowPlatform !== 'console' && data.lowPlatform !== 'handheld') {
+            recCpu = "Keep Current";
+            executionText = `Your processing architecture (<strong>${data.lowCpu}</strong>) is already equal to or structurally superior to <strong>${data.highName}'s</strong> processor (<strong>${data.highCpu}</strong>). You do not need to spend money on a CPU or platform swap to outpace them. A targeted graphics card upgrade alone will completely unchain your system frames and comfortably leapfrog their entire build. `;
+        } else {
+            // CPU upgrade required to match or surpass target's tier layout
+            if (data.highCpuTier === 6) {
+                // Target is Dariush running a Flagship 9950X3D layout
+                recCpu = "Ryzen 9 9950X3D";
+                if (data.lowPlatform === 'am5') {
+                    executionText = `Since you are already established on the AM5 platform socket, a direct drop-in upgrade to the flagship <strong>Ryzen 9 9950X3D</strong> is all it takes to match their processing layout without buying a new motherboard. `;
+                } else if (data.lowPlatform === 'console' || data.lowPlatform === 'handheld' || data.lowPlatform === 'prebuilt') {
+                    executionText = `To shatter your restrictive hardware bounds and securely surpass an absolute flagship setup, you must migrate completely to a standard desktop environment tracking the <strong>Ryzen 9 9950X3D</strong>. `;
+                } else {
+                    executionText = `To cleanly eclipse an ultra-flagship core of this tier, your old platform cannot carry the required code paths. A full platform overhaul including an AM5 motherboard, DDR5 layout, and the <strong>Ryzen 9 9950X3D</strong> is required. `;
+                }
+            } else if (data.highCpuTier === 5 || data.lowPlatform === 'am5') {
+                // Target is running a high-end 7800X3D, or the lower user is on AM5 but running a weaker non-cache core
+                recCpu = "Ryzen 7 7800X3D";
+                if (data.lowPlatform === 'am5') {
+                    executionText = `Since you are already on the AM5 platform, dropping in the definitive gaming king—the <strong>Ryzen 7 7800X3D</strong>—will maximize your processing thresholds and eliminate any background engine stutters. `;
+                } else if (data.lowPlatform === 'console' || data.lowPlatform === 'handheld' || data.lowPlatform === 'prebuilt') {
+                    executionText = `To move out of your closed system constraints and match their high-end performance, a full move to a standard desktop PC built around the <strong>Ryzen 7 7800X3D</strong> is required. `;
+                } else {
+                    executionText = `Your current platform cannot host the bandwidth required to beat this tier. A full platform leap to an AM5 motherboard, DDR5 memory, and the <strong>Ryzen 7 7800X3D</strong> is necessary to fully unchain your graphics card. `;
+                }
+            } else {
+                // Target has a Tier 4 or lower CPU, and lower user is on a dead socket
+                if (data.lowPlatform === 'am4-3000' || data.lowPlatform === 'am4' || data.lowPlatform === 'am4-x3d') {
+                    recCpu = "Ryzen 7 5700X3D";
+                    executionText = `Since you are operating on a flexible AM4 Ryzen configuration, a drop-in upgrade to the 3D V-Cache powered <strong>Ryzen 7 5700X3D</strong> is a vastly cheaper alternative to a full PC rebuild. This single swap will instantly vault your gaming performance past theirs. `;
+                } else if (data.lowPlatform === 'intel-9th' || data.lowPlatform === 'legacy-intel') {
+                    recCpu = "Ryzen 7 7800X3D";
+                    executionText = `Your old Intel socket is dead-ended. To comfortably surpass their setup, a platform migration to the AM5-based <strong>Ryzen 7 7800X3D</strong> is the smartest long-term play to guarantee you eclipse their performance. `;
+                } else {
+                    recCpu = "Ryzen 7 7800X3D";
+                    executionText = `To securely outpace their configuration, establishing a core platform foundation around the <strong>Ryzen 7 7800X3D</strong> is highly recommended. `;
+                }
+            }
+        }
+
+        // Target GPU allocation matrices
+        if (data.highScore >= 90) {
+            recGpu = "RTX 5090";
+            executionText += `On the graphics front, matching or beating a modern 90-class titan requires throwing traditional budget value out the window. You must match them directly with a factory-fresh retail <strong>RTX 5090</strong> running unconstrained power limits to capture the pure rasterization lead.`;
+        } else if (data.highScore >= 80) {
+            recGpu = "RTX 5080";
+            executionText += `To securely leapfrog this flagship machine, deploy an <strong>RTX 5080</strong>. Shifting into this ultra-wide, high-bandwidth architecture tier completely outpaces the target setup's raster pipeline.`;
+        } else if (data.highScore >= 65) {
+            recGpu = "RTX 5070 Ti";
+            executionText += `To beat out this high-end A-Tier setup, swap your graphics layout out for a retail <strong>RTX 5070 Ti</strong>. Moving to this tier secures a massive 16GB framework of next-gen GDDR7 memory on a full 256-bit bus, instantly surpassing their processing specs.`;
+        } else {
+            recGpu = "RTX 4070 Super";
+            executionText += `To effortlessly pass this system, deploy a clean <strong>RTX 4070 Super</strong>. This injects modern architectural features and sufficient frame-buffer headroom to instantly out-render the target machine.`;
+        }
+
+        const cpuPill = document.getElementById('target-cpu-pill');
+        if (recCpu === "Keep Current") {
+            cpuPill.style.backgroundColor = "rgba(255,255,255,0.05)";
+            cpuPill.style.color = "var(--text-muted)";
+            cpuPill.style.border = "1px solid rgba(255,255,255,0.1)";
+            cpuPill.innerText = `CPU: ${data.lowCpu} (Keep)`;
+        } else {
+            cpuPill.style.backgroundColor = "#10b981";
+            cpuPill.style.color = "#042f1a";
+            cpuPill.style.border = "none";
+            cpuPill.innerText = `CPU: ${recCpu}`;
+        }
+        
+        document.getElementById('target-gpu-pill').innerText = `GPU: ${recGpu}`;
+        document.getElementById('path-execution-details').innerHTML = executionText;
+
+        openModal();
+        abortComparison();
+    }
+
+    function openModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
+    function closeModal(e) { if (!e || e.target === document.getElementById('modal-overlay') || e.target.classList.contains('modal-close-btn')) { document.getElementById('modal-overlay').style.display = 'none'; } }
+</script>
 
 </body>
 </html>
