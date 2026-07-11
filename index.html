@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#THE-STANCE Tier List</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #151d30;
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #3b82f6;
+            --border-color: #1e293b;
+            
+            --s-tier: #f59e0b;
+            --a-tier: #a855f7;
+            --b-tier: #3b82f6;
+            --c-tier: #10b981;
+            --d-tier: #ec4899;
+            --e-tier: #f43f5e;
+            --f-tier: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .tier-section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .tier-header {
+            padding: 1rem 1.5rem;
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tier-header.s { background: linear-gradient(to right, rgba(245, 158, 11, 0.15), transparent); border-left: 6px solid var(--s-tier); color: var(--s-tier); }
+        .tier-header.a { background: linear-gradient(to right, rgba(168, 85, 247, 0.15), transparent); border-left: 6px solid var(--a-tier); color: var(--a-tier); }
+        .tier-header.b { background: linear-gradient(to right, rgba(59, 130, 246, 0.15), transparent); border-left: 6px solid var(--b-tier); color: var(--b-tier); }
+        .tier-header.c { background: linear-gradient(to right, rgba(16, 185, 129, 0.15), transparent); border-left: 6px solid var(--c-tier); color: var(--c-tier); }
+        .tier-header.d { background: linear-gradient(to right, rgba(236, 72, 153, 0.15), transparent); border-left: 6px solid var(--d-tier); color: var(--d-tier); }
+        .tier-header.e { background: linear-gradient(to right, rgba(244, 63, 94, 0.15), transparent); border-left: 6px solid var(--e-tier); color: var(--e-tier); }
+        .tier-header.f { background: linear-gradient(to right, rgba(239, 68, 68, 0.15), transparent); border-left: 6px solid var(--f-tier); color: var(--f-tier); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .rank {
+            font-weight: 700;
+            color: var(--text-muted);
+            width: 8%;
+        }
+
+        .name-cell {
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .specs {
+            color: var(--text-muted);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+        }
+
+        .score-badge {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .arrow-up {
+            color: #10b981;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .console-tag {
+            font-size: 0.7rem;
+            background-color: #374151;
+            color: #d1d5db;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .handheld-tag {
+            font-size: 0.7rem;
+            background-color: #1e3a8a;
+            color: #bfdbfe;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .prebuilt-tag {
+            font-size: 0.7rem;
+            background-color: #7c2d12;
+            color: #ffedd5;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 1rem 0.5rem; }
+            th, td { padding: 0.75rem 0.75rem; }
+            .specs { font-size: 0.75rem; }
+            h1 { font-size: 1.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>#THE-STANCE TIER LIST</h1>
+        <p class="subtitle">1080p/1440p Bottleneck Adjusted Rankings</p>
+    </header>
+
+    <!-- S TIER -->
+    <div class="tier-section">
+        <div class="tier-header s">S TIER — FLAGSHIP (80+)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">Rank</th>
+                    <th>Name</th>
+                    <th>Specs</th>
+                    <th style="text-align: right;">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="rank">1</td>
+                    <td class="name-cell">Dariush</td>
+                    <td class="specs">Ryzen 9 9950X3D - RTX 5090 - 64GB</td>
+                    <td style="text-align: right;"><span class="score-badge">100</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">2</td>
+                    <td class="name-cell">JC</td>
+                    <td class="specs">Ryzen 5700X3D - RTX 5080 - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">86</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">3</td>
+                    <td class="name-cell">Satish</td>
+                    <td class="specs">Ryzen 5800X - RTX 5070 Ti - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">80</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- A TIER -->
+    <div class="tier-section">
+        <div class="tier-header a">A TIER — HIGH END (60 - 79)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">Rank</th>
+                    <th>Name</th>
+                    <th>Specs</th>
+                    <th style="text-align: right;">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="rank">4</td>
+                    <td class="name-cell">Tayles <span class="arrow-up">▲</span></td>
+                    <td class="specs">Ryzen 7 7800X3D - RTX 5070 - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge" style="border-color: var(--a-tier);">78</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">5</td>
+                    <td class="name-cell">Reilly</td>
+                    <td class="specs">Ryzen 5800X - RTX 5070 - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">74</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">6</td>
+                    <td class="name-cell">Riaz Desk</td>
+                    <td class="specs">Ryzen 5800X3D - RTX 3080 Ti - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">68</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">7</td>
+                    <td class="name-cell">Kumaa</td>
+                    <td class="specs">i9-9900K - RTX 3080 Ti - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">65</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">8</td>
+                    <td class="name-cell">Riaz TV</td>
+                    <td class="specs">Ryzen 5700X3D - RTX 3080 - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">64</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">9</td>
+                    <td class="name-cell">Jake</td>
+                    <td class="specs">Ryzen 3600X - RTX 5070 - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">62</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- B TIER -->
+    <div class="tier-section">
+        <div class="tier-header b">B TIER — SOLID MID-RANGE (40 - 59)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">Rank</th>
+                    <th>Name</th>
+                    <th>Specs</th>
+                    <th style="text-align: right;">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="rank">10</td>
+                    <td class="name-cell">Kyle</td>
+                    <td class="specs">Ryzen 5600X - RTX 3080 - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">58</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">11</td>
+                    <td class="name-cell">Blake</td>
+                    <td class="specs">Ryzen 3900X - RTX 3080 - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">55</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">12</td>
+                    <td class="name-cell">Dylan</td>
+                    <td class="specs">Ryzen 7700X - RTX 3070 Ti - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">54</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">13</td>
+                    <td class="name-cell">PlayStation 5 Pro <span class="console-tag">Console</span></td>
+                    <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 3070 Ti / RX 6800 - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">48</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">14</td>
+                    <td class="name-cell">Ravin</td>
+                    <td class="specs">Ryzen 5700X3D - RTX 3060 Ti - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">45</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">15</td>
+                    <td class="name-cell">John</td>
+                    <td class="specs">i9-9900 - RTX 3060 Ti - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">42</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- C TIER -->
+    <div class="tier-section">
+        <div class="tier-header c">C TIER — TARGET CURRENT GEN (30 - 39)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">Rank</th>
+                    <th>Name</th>
+                    <th>Specs</th>
+                    <th style="text-align: right;">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="rank">16</td>
+                    <td class="name-cell">Pawan</td>
+                    <td class="specs">Ryzen 5 5500 - RTX 2080 Super - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">36</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">17</td>
+                    <td class="name-cell">Alan</td>
+                    <td class="specs">Ryzen 3600 - RTX 2080 Super - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">36</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">18=</td>
+                    <td class="name-cell">PlayStation 5 <span class="console-tag">Console</span></td>
+                    <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 2070 Super / 2080 - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">31</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">18=</td>
+                    <td class="name-cell">Xbox Series X <span class="console-tag">Console</span></td>
+                    <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 2070 Super / 2080 - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">31</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">20</td>
+                    <td class="name-cell">Steam Machine <span class="console-tag">Prebuilt</span></td>
+                    <td class="specs">Semi-custom Zen 4 - Semi-custom RDNA 3 - 16GB</td>
+                    <td style="text-align: right;"><span class="score-badge">30</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- D TIER -->
+    <div class="tier-section">
+        <div class="tier-header d">D TIER — LOW END CURRENT GEN (14 - 29)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">Rank</th>
+                    <th>Name</th>
+                    <th>Specs</th>
+                    <th style="text-align: right;">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="rank">21</td>
+                    <td class="name-cell">Amila</td>
+                    <td class="specs">i7-8086K - GTX 1080 - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">20</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">22</td>
+                    <td class="name-cell">Xbox Series S <span class="console-tag">Console</span></td>
+                    <td class="specs">Zen 2 locked (~ 3700X) - ~ GTX 1650 Super - 10GB</td>
+                    <td style="text-align: right;"><span class="score-badge">15</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">23</td>
+                    <td class="name-cell">Nintendo Switch 2 <span class="console-tag">Console</span></td>
+                    <td class="specs">ARM Cortex A78C - ~ GTX 1050 Ti + DLSS - 12GB</td>
+                    <td style="text-align: right;"><span class="score-badge">14</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- E TIER -->
+    <div class="tier-section">
+        <div class="tier-header e">E TIER — ABSOLUTE MINIMUM (8 - 13)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">Rank</th>
+                    <th>Name</th>
+                    <th>Specs</th>
+                    <th style="text-align: right;">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="rank">24</td>
+                    <td class="name-cell">Xbox One X <span class="console-tag">Console</span></td>
+                    <td class="specs">Jaguar 8-core - ~ RX 580 - HDD - 12GB</td>
+                    <td style="text-align: right;"><span class="score-badge">13</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">25</td>
+                    <td class="name-cell">PlayStation 4 Pro <span class="console-tag">Console</span></td>
+                    <td class="specs">Jaguar 8-core - ~ RX 470 / GTX 1060 - HDD - 8GB</td>
+                    <td style="text-align: right;"><span class="score-badge">10</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">26</td>
+                    <td class="name-cell">MSI Claw 8 AI+ <span class="handheld-tag">Handheld</span></td>
+                    <td class="specs">Core Ultra 7 258V - Arc 140V - 32GB shared</td>
+                    <td style="text-align: right;"><span class="score-badge">10</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">27</td>
+                    <td class="name-cell">Steam Deck <span class="handheld-tag">Handheld</span></td>
+                    <td class="specs">Zen 2 4-core - ~ GTX 1050 Ti - 16GB shared - 800p</td>
+                    <td style="text-align: right;"><span class="score-badge">8</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- F TIER -->
+    <div class="tier-section">
+        <div class="tier-header f">F TIER — NEEDS AN UPGRADE (0 - 7)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">Rank</th>
+                    <th>Name</th>
+                    <th>Specs</th>
+                    <th style="text-align: right;">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="rank">28</td>
+                    <td class="name-cell">PlayStation 4 <span class="console-tag">Console</span></td>
+                    <td class="specs">Jaguar 8-core - ~ GTX 750 Ti / GTX 1050 - HDD - 8GB</td>
+                    <td style="text-align: right;"><span class="score-badge">7</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">29</td>
+                    <td class="name-cell">Xbox One S <span class="console-tag">Console</span></td>
+                    <td class="specs">Jaguar 8-core - ~ HD 7790 - HDD - 8GB</td>
+                    <td style="text-align: right;"><span class="score-badge">5</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">30</td>
+                    <td class="name-cell">Xbox One <span class="console-tag">Console</span></td>
+                    <td class="specs">Jaguar 8-core - ~ HD 7770 / GTX 750 - HDD - 8GB</td>
+                    <td style="text-align: right;"><span class="score-badge">4</span></td>
+                </tr>
+                <tr>
+                    <td class="rank">31</td>
+                    <td class="name-cell">Nintendo Switch <span class="console-tag">Console</span></td>
+                    <td class="specs">Tegra X1 - 256 Maxwell cores - 4GB - 720p docked</td>
+                    <td style="text-align: right;"><span class="score-badge">3</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
