@@ -1,0 +1,8 @@
+{
+  "name": "The Stance Tier List",
+  "description": "#THE-STANCE Interactive Tier List & Comparison Engine with Bottleneck Adjusted Rankings and Upgrade Path metrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "the-stance-tier-list",
+  "version": "1.0.0",
+  "description": "#THE-STANCE Interactive Tier List & Comparison Engine",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo 'No build step required'",
+    "lint": "echo 'No lint step required'",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
