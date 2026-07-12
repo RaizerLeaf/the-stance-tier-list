@@ -414,6 +414,78 @@
 
         .part-description { font-size: 0.9rem; color: #e5e7eb; }
 
+        .target-parts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        @media (max-width: 640px) {
+            .target-parts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .pill-intel {
+            background-color: #3b82f6 !important;
+            color: #0b0f19 !important;
+        }
+        .pill-ryzen {
+            background-color: #f97316 !important;
+            color: #0b0f19 !important;
+        }
+        .pill-geforce {
+            background-color: #10b981 !important;
+            color: #042f1a !important;
+        }
+        .pill-radeon {
+            background-color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+        .pill-keep {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            color: var(--text-muted) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* GPU Relative Performance and Upscaling Database Styles */
+        .gpu-tab-btn {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .gpu-tab-btn:hover {
+            color: var(--text-color);
+        }
+        .gpu-tab-btn.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+            font-weight: 600;
+        }
+        .gpu-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+        .gpu-list-item:last-child {
+            border-bottom: none;
+        }
+        .gpu-list-item:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        .mt-12 {
+            margin-top: 3rem;
+        }
+
         @media (max-width: 768px) {
             .stats-grid { grid-template-columns: 1fr; }
             .upgrade-card { grid-column: span 1; }
@@ -596,7 +668,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="a-7" data-id="a-7" data-name="Kumaa" data-cpu="i9-9900K" data-gpu="RTX 3080 Ti" data-ram="32GB" data-score="65" data-platform="intel-9th" data-cpu-tier="2">
+                <tr class="system-row" data-target="a-7" data-id="a-7" data-name="Kumaa" data-cpu="i9-9900K" data-gpu="RTX 3080 Ti" data-ram="32GB" data-score="65" data-platform="intel-9th" data-cpu-tier="1">
                     <td class="rank">7</td>
                     <td class="name-cell">Kumaa</td>
                     <td class="specs">i9-9900K - RTX 3080 Ti - 32GB</td>
@@ -792,7 +864,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="b-15" data-id="b-15" data-name="John" data-cpu="i9-9900" data-gpu="RTX 3060 Ti" data-ram="32GB" data-score="42" data-platform="intel-9th" data-cpu-tier="2">
+                <tr class="system-row" data-target="b-15" data-id="b-15" data-name="John" data-cpu="i9-9900" data-gpu="RTX 3060 Ti" data-ram="32GB" data-score="42" data-platform="intel-9th" data-cpu-tier="1">
                     <td class="rank">15</td>
                     <td class="name-cell">John</td>
                     <td class="specs">i9-9900 - RTX 3060 Ti - 32GB</td>
@@ -1234,6 +1306,64 @@
             </tbody>
         </table>
     </div>
+
+    <!-- GPU Database & AI Upscaling Hub -->
+    <div class="tier-section mt-12" id="gpu-database-section">
+        <div class="tier-header" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: #e2e8f0; border-left: 4px solid #3b82f6;">
+            GPU RELATIVE PERFORMANCE DATABASE & UPSCALING ANALYSIS
+        </div>
+        <div class="gpu-db-container" style="background-color: var(--card-bg); border-radius: 0 0 12px 12px; padding: 1.5rem; border: 1px solid var(--border-color); border-top: none;">
+            <div class="gpu-tabs" style="display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                <button class="gpu-tab-btn active" id="btn-gpu-perf-lookup" onclick="switchGpuTab('gpu-perf-lookup')">Relative Power Lookup</button>
+                <button class="gpu-tab-btn" id="btn-gpu-tech-scaling" onclick="switchGpuTab('gpu-tech-scaling')">DLSS vs FSR AI Analysis</button>
+            </div>
+
+            <!-- Tab 1: Relative Power Lookup -->
+            <div id="gpu-perf-lookup" class="gpu-tab-content">
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                    Official TechPowerUp Relative Performance hierarchy, anchored to the flagship <strong>GeForce RTX 5090 (100%)</strong>.
+                </p>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <input type="text" id="gpu-search-input" placeholder="Search GPU model (e.g. 9070, 3080, 7900)..." style="flex: 1; padding: 0.5rem 0.75rem; border-radius: 6px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); font-size: 0.9rem;" onkeyup="filterGpuDb()">
+                    <select id="gpu-vendor-filter" style="padding: 0.5rem; border-radius: 6px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); font-size: 0.9rem;" onchange="filterGpuDb()">
+                        <option value="all">All Vendors</option>
+                        <option value="Nvidia">NVIDIA</option>
+                        <option value="AMD">AMD</option>
+                        <option value="Intel">Intel</option>
+                    </select>
+                </div>
+                <div class="gpu-list-scroll" id="gpu-list-results" style="max-height: 280px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.5rem; background-color: rgba(0,0,0,0.15);">
+                    <!-- Dynamically generated list items -->
+                </div>
+            </div>
+
+            <!-- Tab 2: DLSS vs FSR AI Analysis -->
+            <div id="gpu-tech-scaling" class="gpu-tab-content" style="display: none; line-height: 1.6; font-size: 0.95rem; color: #e2e8f0;">
+                <h4 style="font-weight: 600; color: #3b82f6; margin-bottom: 0.5rem;">The AI Scaling Revolution: DLSS vs FSR</h4>
+                <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                    While raw rasterization defines traditional graphics pipelines, contemporary software leverages temporal upscalers to completely transform game performance.
+                </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="stats-grid">
+                    <div style="background-color: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 8px; padding: 1rem;">
+                        <strong style="color: #10b981; font-size: 1.05rem; display: block; margin-bottom: 0.5rem;">NVIDIA DLSS (Deep Learning Super Sampling)</strong>
+                        <ul style="list-style: disc; margin-left: 1.2rem; font-size: 0.9rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <li><strong>Hardware-Accelerated ML:</strong> Dedicated Tensor Cores execute local deep learning models, reconstructing crystal-clear frames with virtually zero ghosting artifacts.</li>
+                            <li><strong>Frame Generation (DLSS 3):</strong> Exclusive to RTX 40 and 50 series, injecting entire AI-generated frames to double framerates.</li>
+                            <li><strong>Ray Reconstruction (DLSS 3.5/4):</strong> Extends temporal stabilization and maximizes lighting accuracy in real-time ray-traced engines.</li>
+                        </ul>
+                    </div>
+                    <div style="background-color: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 8px; padding: 1rem;">
+                        <strong style="color: #ef4444; font-size: 1.05rem; display: block; margin-bottom: 0.5rem;">AMD FSR (FidelityFX Super Resolution)</strong>
+                        <ul style="list-style: disc; margin-left: 1.2rem; font-size: 0.9rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <li><strong>The RX 9000 & FSR 4 Shift:</strong> FSR 4 introduces <em>fully machine-learned temporal upscaling</em>, departing from the hand-crafted hand-tuned heuristics of FSR 3.</li>
+                            <li><strong>AI Core Accelerators:</strong> RX 9000 uses dedicated AI accelerator blocks in the compute units to execute FSR 4's neural networks with near-zero latency.</li>
+                            <li><strong>FSR 4 vs FSR 3 Breakthrough:</strong> Despite having a smaller 192-bit bus and 16GB VRAM compared to the legacy RX 7900 XTX's 384-bit bus and 24GB VRAM, the <strong>Radeon RX 9070 XT</strong> comfortably outperforms the RX 7900 XTX in modern gaming when utilizing ML-driven FSR 4. The 7900 XTX is limited to shader-bound FSR 3 algorithms, resulting in higher rendering overhead and softer image outputs.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Comparison Engine Modal Popup Overlay -->
@@ -1263,9 +1393,11 @@
 
             <div class="modal-section-title">Leapfrog Upgrade Path</div>
             <div class="modal-path-box">
-                <div id="target-parts-container">
-                    <span class="part-pill" id="target-cpu-pill">CPU: --</span>
-                    <span class="part-pill" id="target-gpu-pill" style="background-color: #3b82f6; color: #0f172a; margin-left: 0.25rem;">GPU: --</span>
+                <div id="target-parts-container" class="target-parts-grid">
+                    <span class="part-pill" id="intel-cpu-pill">Intel CPU: --</span>
+                    <span class="part-pill" id="geforce-gpu-pill">Geforce GPU: --</span>
+                    <span class="part-pill" id="amd-cpu-pill">AMD CPU: --</span>
+                    <span class="part-pill" id="radeon-gpu-pill">Radeon GPU: --</span>
                 </div>
                 <div class="part-description" id="path-execution-details">--</div>
             </div>
@@ -1274,12 +1406,491 @@
 </div>
 
 <script>
+    const GPU_DATABASE = [
+        { name: "GeForce RTX 5090", perf: 100, vendor: "Nvidia" },
+        { name: "GeForce RTX 4090", perf: 76, vendor: "Nvidia" },
+        { name: "GeForce RTX 5080", perf: 66, vendor: "Nvidia" },
+        { name: "GeForce RTX 4080 SUPER", perf: 59, vendor: "Nvidia" },
+        { name: "GeForce RTX 4080", perf: 58, vendor: "Nvidia" },
+        { name: "Radeon RX 7900 XTX", perf: 58, vendor: "AMD" },
+        { name: "GeForce RTX 5070 Ti", perf: 57, vendor: "Nvidia" },
+        { name: "Radeon RX 9070 XT", perf: 55, vendor: "AMD" },
+        { name: "Radeon RX 7900 XT", perf: 50, vendor: "AMD" },
+        { name: "GeForce RTX 3090 Ti", perf: 49, vendor: "Nvidia" },
+        { name: "GeForce RTX 4070 Ti SUPER", perf: 49, vendor: "Nvidia" },
+        { name: "Radeon RX 9070", perf: 49, vendor: "AMD" },
+        { name: "GeForce RTX 4070 Ti", perf: 45, vendor: "Nvidia" },
+        { name: "GeForce RTX 5070", perf: 45, vendor: "Nvidia" },
+        { name: "GeForce RTX 3090", perf: 44, vendor: "Nvidia" },
+        { name: "GeForce RTX 3080 Ti", perf: 43, vendor: "Nvidia" },
+        { name: "GeForce RTX 4070 SUPER", perf: 42, vendor: "Nvidia" },
+        { name: "Radeon RX 7900 GRE", perf: 41, vendor: "AMD" },
+        { name: "Radeon RX 6950 XT", perf: 41, vendor: "AMD" },
+        { name: "GeForce RTX 4070", perf: 40, vendor: "Nvidia" },
+        { name: "Radeon RX 6900 XT", perf: 40, vendor: "AMD" },
+        { name: "GeForce RTX 3080", perf: 39, vendor: "Nvidia" },
+        { name: "Radeon RX 7800 XT", perf: 39, vendor: "AMD" },
+        { name: "Radeon RX 6800 XT", perf: 38, vendor: "AMD" },
+        { name: "GeForce RTX 5060 Ti 16 GB", perf: 35, vendor: "Nvidia" },
+        { name: "GeForce RTX 5060 Ti 8 GB", perf: 35, vendor: "Nvidia" },
+        { name: "Radeon RX 7700 XT", perf: 34, vendor: "AMD" },
+        { name: "Radeon RX 9060 XT 16 GB", perf: 33, vendor: "AMD" },
+        { name: "GeForce RTX 3070 Ti", perf: 33, vendor: "Nvidia" },
+        { name: "Radeon RX 6800", perf: 32, vendor: "AMD" },
+        { name: "Radeon RX 9060 XT 8 GB", perf: 31, vendor: "AMD" },
+        { name: "GeForce RTX 3070", perf: 31, vendor: "Nvidia" },
+        { name: "GeForce RTX 2080 Ti", perf: 31, vendor: "Nvidia" },
+        { name: "GeForce RTX 4060 Ti 8 GB", perf: 31, vendor: "Nvidia" },
+        { name: "GeForce RTX 5060", perf: 30, vendor: "Nvidia" },
+        { name: "Radeon RX 6750 XT", perf: 29, vendor: "AMD" },
+        { name: "GeForce RTX 3060 Ti", perf: 27, vendor: "Nvidia" },
+        { name: "Radeon RX 6700 XT", perf: 27, vendor: "AMD" },
+        { name: "GeForce RTX 2080 SUPER", perf: 25, vendor: "Nvidia" },
+        { name: "Radeon RX 7600 XT", perf: 24, vendor: "AMD" },
+        { name: "GeForce RTX 4060", perf: 24, vendor: "Nvidia" },
+        { name: "Arc B580", perf: 24, vendor: "Intel" },
+        { name: "GeForce RTX 5050", perf: 24, vendor: "Nvidia" },
+        { name: "GeForce RTX 2080", perf: 24, vendor: "Nvidia" },
+        { name: "Radeon RX 6650 XT", perf: 23, vendor: "AMD" },
+        { name: "Radeon RX 7600", perf: 23, vendor: "AMD" },
+        { name: "GeForce RTX 2070 SUPER", perf: 22, vendor: "Nvidia" },
+        { name: "GeForce GTX 1080 Ti", perf: 22, vendor: "Nvidia" },
+        { name: "Arc A770", perf: 22, vendor: "Intel" },
+        { name: "GeForce RTX 3060 12 GB", perf: 21, vendor: "Nvidia" },
+        { name: "Radeon RX 6600 XT", perf: 21, vendor: "AMD" },
+        { name: "Radeon VII", perf: 21, vendor: "AMD" },
+        { name: "Arc A750", perf: 20, vendor: "Intel" },
+        { name: "Radeon RX 5700 XT", perf: 20, vendor: "AMD" },
+        { name: "GeForce RTX 2070", perf: 19, vendor: "Nvidia" },
+        { name: "Radeon RX 6600", perf: 18, vendor: "AMD" },
+        { name: "Arc A580", perf: 18, vendor: "Intel" },
+        { name: "GeForce RTX 2060 SUPER", perf: 18, vendor: "Nvidia" },
+        { name: "Radeon RX Vega 64", perf: 17, vendor: "AMD" },
+        { name: "GeForce RTX 2060", perf: 17, vendor: "Nvidia" },
+        { name: "Radeon RX 5700", perf: 17, vendor: "AMD" },
+        { name: "GeForce GTX 1080", perf: 16, vendor: "Nvidia" },
+        { name: "GeForce GTX 1070 Ti", perf: 16, vendor: "Nvidia" },
+        { name: "Radeon RX 5600 XT", perf: 16, vendor: "AMD" },
+        { name: "Radeon RX Vega 56", perf: 15, vendor: "AMD" },
+        { name: "GeForce GTX 1070", perf: 14, vendor: "Nvidia" },
+        { name: "GeForce GTX 1660 SUPER", perf: 14, vendor: "Nvidia" },
+        { name: "GeForce GTX 1660 Ti", perf: 14, vendor: "Nvidia" },
+        { name: "GeForce GTX 980 Ti", perf: 13, vendor: "Nvidia" },
+        { name: "GeForce RTX 3050 8 GB", perf: 13, vendor: "Nvidia" },
+        { name: "Radeon R9 FURY X", perf: 13, vendor: "AMD" },
+        { name: "GeForce GTX 1660", perf: 13, vendor: "Nvidia" },
+        { name: "Radeon RX 590", perf: 12, vendor: "AMD" },
+        { name: "Radeon R9 FURY", perf: 12, vendor: "AMD" },
+        { name: "GeForce GTX 980", perf: 11, vendor: "Nvidia" },
+        { name: "GeForce GTX 1650 SUPER", perf: 11, vendor: "Nvidia" },
+        { name: "Radeon RX 6500 XT", perf: 11, vendor: "AMD" },
+        { name: "Radeon RX 5500 XT", perf: 11, vendor: "AMD" },
+        { name: "Radeon RX 580", perf: 11, vendor: "AMD" },
+        { name: "GeForce GTX 1060 6 GB", perf: 11, vendor: "Nvidia" },
+        { name: "Radeon R9 390X", perf: 11, vendor: "AMD" },
+        { name: "GeForce GTX 690", perf: 10, vendor: "Nvidia" },
+        { name: "Radeon RX 480", perf: 10, vendor: "AMD" },
+        { name: "Radeon HD 7990", perf: 10, vendor: "AMD" },
+        { name: "GeForce GTX 780 Ti", perf: 10, vendor: "Nvidia" },
+        { name: "GeForce GTX 970", perf: 10, vendor: "Nvidia" },
+        { name: "Radeon R9 290X", perf: 10, vendor: "AMD" },
+        { name: "Radeon R9 390", perf: 10, vendor: "AMD" },
+        { name: "Radeon RX 570", perf: 10, vendor: "AMD" },
+        { name: "Radeon R9 290", perf: 9, vendor: "AMD" },
+        { name: "Radeon RX 470", perf: 9, vendor: "AMD" },
+        { name: "GeForce GTX 1650", perf: 8, vendor: "Nvidia" },
+        { name: "Radeon RX 6400", perf: 8, vendor: "AMD" },
+        { name: "Arc A380", perf: 8, vendor: "Intel" },
+        { name: "GeForce GTX 780", perf: 8, vendor: "Nvidia" },
+        { name: "Radeon HD 7970 GHz Edition", perf: 7, vendor: "AMD" },
+        { name: "GeForce GTX 590", perf: 7, vendor: "Nvidia" },
+        { name: "Radeon R9 280X", perf: 7, vendor: "AMD" },
+        { name: "Radeon HD 6990", perf: 7, vendor: "AMD" },
+        { name: "GeForce GTX 1050 Ti", perf: 7, vendor: "Nvidia" },
+        { name: "GeForce GTX 680", perf: 7, vendor: "Nvidia" },
+        { name: "Radeon R9 380", perf: 7, vendor: "AMD" },
+        { name: "Radeon HD 7970", perf: 7, vendor: "AMD" },
+        { name: "GeForce GTX 770", perf: 6, vendor: "Nvidia" },
+        { name: "Radeon R9 285", perf: 6, vendor: "AMD" },
+        { name: "GeForce GTX 960", perf: 6, vendor: "Nvidia" },
+        { name: "GeForce GTX 670", perf: 6, vendor: "Nvidia" },
+        { name: "Radeon HD 5970", perf: 5, vendor: "AMD" },
+        { name: "GeForce GTX 1630", perf: 5, vendor: "Nvidia" },
+        { name: "Radeon HD 7950", perf: 5, vendor: "AMD" },
+        { name: "GeForce GTX 1050", perf: 5, vendor: "Nvidia" },
+        { name: "GeForce GTX 760", perf: 5, vendor: "Nvidia" },
+        { name: "GeForce GTX 580", perf: 5, vendor: "Nvidia" },
+        { name: "GeForce GTX 660 Ti", perf: 5, vendor: "Nvidia" },
+        { name: "Radeon R9 270X", perf: 5, vendor: "AMD" },
+        { name: "Radeon HD 7870 GHz Edition", perf: 5, vendor: "AMD" },
+        { name: "GeForce GTX 950", perf: 5, vendor: "Nvidia" },
+        { name: "Radeon RX 560", perf: 5, vendor: "AMD" },
+        { name: "GeForce GTX 570", perf: 5, vendor: "Nvidia" },
+        { name: "GeForce GTX 660", perf: 5, vendor: "Nvidia" },
+        { name: "Radeon RX 460", perf: 5, vendor: "AMD" },
+        { name: "Radeon R7 370", perf: 5, vendor: "AMD" },
+        { name: "Radeon HD 6970", perf: 5, vendor: "AMD" },
+        { name: "GeForce GTX 480", perf: 4, vendor: "Nvidia" },
+        { name: "Radeon HD 7850", perf: 4, vendor: "AMD" },
+        { name: "GeForce GTX 295", perf: 4, vendor: "Nvidia" },
+        { name: "Radeon HD 6950", perf: 4, vendor: "AMD" },
+        { name: "GeForce GTX 750 Ti", perf: 4, vendor: "Nvidia" },
+        { name: "Radeon HD 4870 X2", perf: 4, vendor: "AMD" },
+        { name: "GeForce GTX 560 Ti", perf: 4, vendor: "Nvidia" },
+        { name: "Radeon HD 5870", perf: 4, vendor: "AMD" },
+        { name: "Radeon HD 6870", perf: 4, vendor: "AMD" },
+        { name: "GeForce GTX 470", perf: 3, vendor: "Nvidia" },
+        { name: "GeForce GTX 650 Ti", perf: 3, vendor: "Nvidia" },
+        { name: "Radeon HD 5850", perf: 3, vendor: "AMD" },
+        { name: "GeForce GTX 285", perf: 3, vendor: "Nvidia" },
+        { name: "Radeon HD 6850", perf: 3, vendor: "AMD" },
+        { name: "GeForce GTX 280", perf: 3, vendor: "Nvidia" },
+        { name: "Radeon HD 7770 GHz Edition", perf: 3, vendor: "AMD" },
+        { name: "GeForce GTX 275", perf: 3, vendor: "Nvidia" },
+        { name: "GeForce GT 1030", perf: 3, vendor: "Nvidia" },
+        { name: "GeForce GTX 460", perf: 3, vendor: "Nvidia" },
+        { name: "Radeon HD 4890", perf: 3, vendor: "AMD" },
+        { name: "Radeon HD 6790", perf: 3, vendor: "AMD" },
+        { name: "Radeon HD 5830", perf: 2, vendor: "AMD" },
+        { name: "GeForce GTX 650", perf: 2, vendor: "Nvidia" },
+        { name: "GeForce GTX 550 Ti", perf: 2, vendor: "Nvidia" },
+        { name: "Radeon HD 4870", perf: 2, vendor: "AMD" },
+        { name: "GeForce GTX 260", perf: 2, vendor: "Nvidia" },
+        { name: "Radeon HD 5770", perf: 2, vendor: "AMD" },
+        { name: "Radeon HD 7750", perf: 2, vendor: "AMD" },
+        { name: "Radeon HD 5750", perf: 2, vendor: "AMD" },
+        { name: "GeForce GTS 450", perf: 2, vendor: "Nvidia" },
+        { name: "GeForce GTS 250", perf: 2, vendor: "Nvidia" },
+        { name: "Radeon HD 4850", perf: 2, vendor: "AMD" },
+        { name: "Radeon HD 4770", perf: 2, vendor: "AMD" },
+        { name: "Radeon HD 4830", perf: 2, vendor: "AMD" },
+        { name: "Radeon HD 6670", perf: 1, vendor: "AMD" },
+        { name: "GeForce 9800 GT", perf: 1, vendor: "Nvidia" },
+        { name: "GeForce GT 640", perf: 1, vendor: "Nvidia" },
+        { name: "Radeon HD 5670", perf: 1, vendor: "AMD" },
+        { name: "GeForce 9600 GT", perf: 1, vendor: "Nvidia" },
+        { name: "GeForce GT 240", perf: 1, vendor: "Nvidia" },
+        { name: "GeForce GT 440", perf: 1, vendor: "Nvidia" },
+        { name: "Radeon HD 4670", perf: 1, vendor: "AMD" },
+        { name: "Radeon HD 5570", perf: 1, vendor: "AMD" },
+        { name: "GeForce GT 430", perf: 1, vendor: "Nvidia" },
+        { name: "GeForce GT 220", perf: 1, vendor: "Nvidia" },
+        { name: "GeForce GT 520", perf: 1, vendor: "Nvidia" },
+        { name: "Radeon HD 6450", perf: 1, vendor: "AMD" },
+        { name: "Radeon HD 5450", perf: 0, vendor: "AMD" },
+        { name: "Radeon HD 4550", perf: 0, vendor: "AMD" },
+        { name: "GeForce 9400 GT", perf: 0, vendor: "Nvidia" },
+        { name: "GeForce 210", perf: 0, vendor: "Nvidia" }
+    ];
+
+    function normalizeGpuName(name) {
+        if (!name) return "";
+        return name.toLowerCase()
+            .replace(/geforce|radeon/g, "")
+            .replace(/custom/g, "")
+            .replace(/edition/g, "")
+            .replace(/graphics/g, "")
+            .replace(/super/g, "super")
+            .replace(/[\s\-_]+/g, " ")
+            .trim();
+    }
+
+    function getGpuPerf(gpuName) {
+        if (!gpuName) return 0;
+        const norm = normalizeGpuName(gpuName);
+        
+        // Direct fallback map for custom names
+        const fallbacks = {
+            "maxwell 256 cores": 2,
+            "rdna 3 custom": 13,
+            "arc 140v": 11,
+            "hd 7770 custom": 3,
+            "hd 7790 custom": 4,
+            "hd 7850 custom": 4,
+            "rx 580 custom": 11,
+            "gtx 1050 ti custom": 7,
+            "gtx 1060 custom": 11,
+            "gtx 1650s custom": 11,
+            "rtx 2070 super custom": 22,
+            "rtx 2080 custom": 24,
+            "rtx 3070 ti custom": 33
+        };
+        if (fallbacks[norm] !== undefined) {
+            return fallbacks[norm];
+        }
+
+        // Pass 1: Exact match first
+        for (const g of GPU_DATABASE) {
+            const dbNorm = normalizeGpuName(g.name);
+            if (dbNorm === norm) {
+                return g.perf;
+            }
+        }
+
+        // Pass 2: Fuzzy substring matching
+        for (const g of GPU_DATABASE) {
+            const dbNorm = normalizeGpuName(g.name);
+            if (dbNorm.includes(norm) || norm.includes(dbNorm)) {
+                return g.perf;
+            }
+        }
+        
+        return 0; // Default if not found
+    }
+
+    function getGpuVram(gpuName) {
+        if (!gpuName) return "N/A";
+        
+        // 1. Extract explicit VRAM if present in the string (e.g. "RTX 3060 12 GB", "RX 9060 XT 16 GB", "GTX 1060 6 GB")
+        const explicitMatch = gpuName.match(/\b(\d+)\s*(?:GB|G)\b/i);
+        if (explicitMatch) {
+            return `${explicitMatch[1]} GB`;
+        }
+
+        const name = gpuName.toLowerCase();
+
+        // 2. Custom console / handheld / mobile mappings
+        if (name.includes("playstation 5 pro") || name.includes("ps5 pro")) return "16 GB";
+        if (name.includes("playstation 5") || name.includes("ps5")) return "16 GB";
+        if (name.includes("xbox series x")) return "16 GB";
+        if (name.includes("xbox series s")) return "10 GB";
+        if (name.includes("steam deck")) return "16 GB";
+        if (name.includes("switch 2")) return "12 GB";
+        if (name.includes("nintendo switch") || name.includes("switch")) return "4 GB";
+        if (name.includes("msi claw") || name.includes("arc 140v")) return "16 GB";
+        if (name.includes("steam machine")) return "16 GB";
+        if (name.includes("xbox one x")) return "12 GB";
+        if (name.includes("playstation 4 pro") || name.includes("ps4 pro")) return "8 GB";
+        if (name.includes("playstation 4") || name.includes("ps4")) return "8 GB";
+        if (name.includes("xbox one s") || name.includes("xbox one")) return "8 GB";
+
+        // 3. Database lookup for exact or fuzzy matches
+        // Nvidia RTX 50-series
+        if (name.includes("5090")) return "32 GB";
+        if (name.includes("5080")) return "16 GB";
+        if (name.includes("5070 ti")) return "16 GB";
+        if (name.includes("5070")) return "12 GB";
+        if (name.includes("5060 ti")) return "16 GB";
+        if (name.includes("5060")) return "8 GB";
+        if (name.includes("5050")) return "8 GB";
+
+        // Nvidia RTX 40-series
+        if (name.includes("4090")) return "24 GB";
+        if (name.includes("4080 super") || name.includes("4080")) return "16 GB";
+        if (name.includes("4070 ti super")) return "16 GB";
+        if (name.includes("4070 ti")) return "12 GB";
+        if (name.includes("4070 super") || name.includes("4070")) return "12 GB";
+        if (name.includes("4060 ti")) return "8 GB";
+        if (name.includes("4060")) return "8 GB";
+
+        // Nvidia RTX 30-series
+        if (name.includes("3095") || name.includes("3090 ti") || name.includes("3090")) return "24 GB";
+        if (name.includes("3085") || name.includes("3080 ti")) return "12 GB";
+        if (name.includes("3080")) return "10 GB";
+        if (name.includes("3070 ti") || name.includes("3070")) return "8 GB";
+        if (name.includes("3060 ti")) return "8 GB";
+        if (name.includes("3060")) return "12 GB";
+        if (name.includes("3050")) return "8 GB";
+
+        // Nvidia RTX 20-series
+        if (name.includes("2080 ti")) return "11 GB";
+        if (name.includes("2080 super") || name.includes("2080")) return "8 GB";
+        if (name.includes("2070 super") || name.includes("2070")) return "8 GB";
+        if (name.includes("2060 super")) return "8 GB";
+        if (name.includes("2060")) return "6 GB";
+
+        // AMD Radeon RX 9000-series
+        if (name.includes("9070 xt") || name.includes("9070")) return "16 GB";
+        if (name.includes("9060 xt")) return "16 GB";
+
+        // AMD Radeon RX 7000-series
+        if (name.includes("7900 xtx")) return "24 GB";
+        if (name.includes("7900 xt")) return "20 GB";
+        if (name.includes("7900 gre")) return "16 GB";
+        if (name.includes("7800 xt")) return "16 GB";
+        if (name.includes("7700 xt")) return "12 GB";
+        if (name.includes("7600 xt")) return "16 GB";
+        if (name.includes("7600")) return "8 GB";
+
+        // AMD Radeon RX 6000-series
+        if (name.includes("6950 xt") || name.includes("6900 xt")) return "16 GB";
+        if (name.includes("6800 xt") || name.includes("6800")) return "16 GB";
+        if (name.includes("6750 xt") || name.includes("6700 xt")) return "12 GB";
+        if (name.includes("6650 xt") || name.includes("6600 xt") || name.includes("6600")) return "8 GB";
+        if (name.includes("6500 xt") || name.includes("6400")) return "4 GB";
+
+        // Nvidia GTX 10-series / 16-series
+        if (name.includes("1080 ti")) return "11 GB";
+        if (name.includes("1080")) return "8 GB";
+        if (name.includes("1070 ti") || name.includes("1070")) return "8 GB";
+        if (name.includes("1060")) return "6 GB";
+        if (name.includes("1050 ti")) return "4 GB";
+        if (name.includes("1050")) return "2 GB";
+        if (name.includes("1660 super") || name.includes("1660 ti") || name.includes("1660")) return "6 GB";
+        if (name.includes("1650 super") || name.includes("1650")) return "4 GB";
+        if (name.includes("1630")) return "4 GB";
+
+        // Nvidia older GTX / GT
+        if (name.includes("titan x") || name.includes("titan xp")) return "12 GB";
+        if (name.includes("980 ti")) return "6 GB";
+        if (name.includes("980") || name.includes("970")) return "4 GB";
+        if (name.includes("960")) return "4 GB";
+        if (name.includes("950")) return "2 GB";
+        if (name.includes("780 ti") || name.includes("780")) return "3 GB";
+        if (name.includes("770") || name.includes("760") || name.includes("680") || name.includes("670") || name.includes("660 ti") || name.includes("660")) return "2 GB";
+        if (name.includes("1030") || name.includes("750 ti") || name.includes("750")) return "2 GB";
+
+        // Intel Arc
+        if (name.includes("b580")) return "12 GB";
+        if (name.includes("a770")) return "16 GB";
+        if (name.includes("a750")) return "8 GB";
+        if (name.includes("a580")) return "8 GB";
+        if (name.includes("a380")) return "6 GB";
+
+        // AMD older RX / R9 / HD
+        if (name.includes("vii")) return "16 GB";
+        if (name.includes("5700 xt") || name.includes("5700")) return "8 GB";
+        if (name.includes("5600 xt")) return "6 GB";
+        if (name.includes("5500 xt")) return "8 GB";
+        if (name.includes("vega 64") || name.includes("vega 56")) return "8 GB";
+        if (name.includes("rx 590") || name.includes("rx 580") || name.includes("rx 570")) return "8 GB";
+        if (name.includes("rx 480") || name.includes("rx 470")) return "8 GB";
+        if (name.includes("rx 560") || name.includes("rx 460")) return "4 GB";
+        if (name.includes("fury")) return "4 GB";
+        if (name.includes("390x") || name.includes("390") || name.includes("290x") || name.includes("290")) return "8 GB";
+        if (name.includes("280x") || name.includes("280") || name.includes("7970") || name.includes("7950")) return "3 GB";
+        if (name.includes("270x") || name.includes("270") || name.includes("7870") || name.includes("7850") || name.includes("380") || name.includes("285")) return "2 GB";
+        if (name.includes("7790") || name.includes("7770") || name.includes("7750")) return "1 GB";
+
+        // Fallbacks
+        if (name.includes("hd 7")) return "2 GB";
+        if (name.includes("hd 6")) return "1 GB";
+        if (name.includes("hd 5")) return "1 GB";
+        if (name.includes("hd 4")) return "512 MB";
+
+        return "8 GB";
+    }
+
+    function getVramColor(numGbs) {
+        if (isNaN(numGbs)) return "#94a3b8";
+        if (numGbs >= 32) return "#ef4444";  // Hot Red (32GB)
+        if (numGbs >= 24) return "#f97316";  // Orange-Red
+        if (numGbs >= 16) return "#f59e0b";  // Amber / Warm
+        if (numGbs >= 12) return "#10b981";  // Emerald / Green
+        if (numGbs >= 10) return "#06b6d4";  // Cyan / Cool
+        return "#3b82f6";                    // Cold Blue (8GB and under)
+    }
+
+    function isSharedUnifiedGpu(gpuName) {
+        if (!gpuName) return false;
+        const name = gpuName.toLowerCase();
+        return name.includes("custom") || name.includes("maxwell 256") || name.includes("arc 140v");
+    }
+
+    const GEFORCE_CANDIDATES = [
+        { name: "RTX 3050 8 GB", perf: 13 },
+        { name: "RTX 4060", perf: 24 },
+        { name: "RTX 5050", perf: 24 },
+        { name: "RTX 3060 Ti", perf: 27 },
+        { name: "RTX 5060", perf: 30 },
+        { name: "RTX 3070", perf: 31 },
+        { name: "RTX 4060 Ti 8 GB", perf: 31 },
+        { name: "RTX 3070 Ti", perf: 33 },
+        { name: "RTX 5060 Ti 16 GB", perf: 35 },
+        { name: "RTX 3080", perf: 39 },
+        { name: "RTX 4070", perf: 40 },
+        { name: "RTX 4070 SUPER", perf: 42 },
+        { name: "RTX 3080 Ti", perf: 43 },
+        { name: "RTX 4070 Ti", perf: 45 },
+        { name: "RTX 5070", perf: 45 },
+        { name: "RTX 4070 Ti SUPER", perf: 49 },
+        { name: "RTX 5070 Ti", perf: 57 },
+        { name: "RTX 4080", perf: 58 },
+        { name: "RTX 4080 SUPER", perf: 59 },
+        { name: "RTX 5080", perf: 66 },
+        { name: "RTX 4090", perf: 76 },
+        { name: "RTX 5090", perf: 100 }
+    ].sort((a, b) => a.perf - b.perf);
+
+    const RADEON_CANDIDATES = [
+        { name: "RX 6500 XT", perf: 11 },
+        { name: "RX 5500 XT", perf: 11 },
+        { name: "RX 6600", perf: 18 },
+        { name: "RX 6600 XT", perf: 21 },
+        { name: "RX 7600", perf: 23 },
+        { name: "RX 6650 XT", perf: 23 },
+        { name: "RX 7600 XT", perf: 24 },
+        { name: "RX 6700 XT", perf: 27 },
+        { name: "RX 6750 XT", perf: 29 },
+        { name: "RX 9060 XT 8 GB", perf: 31 },
+        { name: "RX 6800", perf: 32 },
+        { name: "RX 9060 XT 16 GB", perf: 33 },
+        { name: "RX 7700 XT", perf: 34 },
+        { name: "RX 6800 XT", perf: 38 },
+        { name: "RX 7800 XT", perf: 39 },
+        { name: "RX 6900 XT", perf: 40 },
+        { name: "RX 6950 XT", perf: 41 },
+        { name: "RX 7900 GRE", perf: 41 },
+        { name: "RX 9070", perf: 49 },
+        { name: "RX 7900 XT", perf: 50 },
+        { name: "RX 9070 XT", perf: 55 },
+        { name: "RX 7900 XTX", perf: 58 }
+    ].sort((a, b) => a.perf - b.perf);
+
     let isCompareMode = false;
     let selectedFirstId = null;
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Add VRAM header to all tier tables
+        document.querySelectorAll('.tier-section table').forEach(table => {
+            const theadRow = table.querySelector('thead tr');
+            if (theadRow) {
+                const vramTh = document.createElement('th');
+                vramTh.textContent = 'VRAM';
+                vramTh.style.textAlign = 'left';
+                vramTh.style.paddingLeft = '1.5rem';
+                // Insert before the last child (which is Score)
+                theadRow.insertBefore(vramTh, theadRow.lastElementChild);
+            }
+        });
+
+        // Set colspan="5" for all detail rows so they span across the new VRAM column too
+        document.querySelectorAll('.details-row td').forEach(td => {
+            if (td.getAttribute('colspan') === '4') {
+                td.setAttribute('colspan', '5');
+            }
+        });
+
+        // Render the local GPU Database
+        renderGpuDb();
+
         const rows = document.querySelectorAll('.system-row');
         rows.forEach(row => {
+            // Append VRAM cell
+            const gpuName = row.getAttribute('data-gpu');
+            const vramValue = getGpuVram(gpuName);
+            
+            const vramTd = document.createElement('td');
+            vramTd.style.paddingLeft = '1.5rem';
+            vramTd.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace';
+            vramTd.style.fontSize = '0.85rem';
+            
+            const platform = row.getAttribute('data-platform');
+            if (platform === 'console' || platform === 'handheld') {
+                vramTd.innerHTML = `<span style="color: #64748b; font-weight: 500;">Unified</span>`;
+            } else {
+                const numGbs = parseInt(vramValue);
+                if (!isNaN(numGbs)) {
+                    const color = getVramColor(numGbs);
+                    vramTd.innerHTML = `<span style="color: ${color}; font-weight: 600;">${vramValue}</span>`;
+                } else {
+                    vramTd.innerHTML = `<span style="color: #94a3b8;">${vramValue}</span>`;
+                }
+            }
+            
+            // Insert before the last child (which is the Score column td)
+            row.insertBefore(vramTd, row.lastElementChild);
+
             row.addEventListener('click', () => {
                 const rowId = row.getAttribute('data-id');
                 
@@ -1304,6 +1915,67 @@
             });
         });
     });
+
+    function switchGpuTab(tabId) {
+        document.querySelectorAll('.gpu-tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.gpu-tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).style.display = 'block';
+        if (tabId === 'gpu-perf-lookup') {
+            document.getElementById('btn-gpu-perf-lookup').classList.add('active');
+        } else {
+            document.getElementById('btn-gpu-tech-scaling').classList.add('active');
+        }
+    }
+
+    function renderGpuDb(filteredList = GPU_DATABASE) {
+        const container = document.getElementById('gpu-list-results');
+        if (!container) return;
+        
+        if (filteredList.length === 0) {
+            container.innerHTML = `<div style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.9rem;">No matching GPU models found.</div>`;
+            return;
+        }
+
+        container.innerHTML = filteredList.map(gpu => {
+            const vendorColor = gpu.vendor === 'Nvidia' ? '#10b981' : (gpu.vendor === 'AMD' ? '#ef4444' : '#3b82f6');
+            const vram = getGpuVram(gpu.name);
+            const numGbs = parseInt(vram);
+            let vramBadge = '';
+            if (isSharedUnifiedGpu(gpu.name)) {
+                vramBadge = `<span style="font-size: 0.75rem; color: #64748b; background-color: rgba(255,255,255,0.02); padding: 0.1rem 0.4rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">Unified</span>`;
+            } else if (!isNaN(numGbs)) {
+                const color = getVramColor(numGbs);
+                vramBadge = `<span style="font-size: 0.75rem; font-weight: 600; color: ${color}; background-color: rgba(255,255,255,0.05); padding: 0.1rem 0.4rem; border-radius: 4px; border: 1px solid ${color}33;">VRAM: ${vram}</span>`;
+            } else {
+                vramBadge = `<span style="font-size: 0.75rem; color: #94a3b8; background-color: rgba(255,255,255,0.05); padding: 0.1rem 0.4rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.08);">VRAM: ${vram}</span>`;
+            }
+
+            return `
+                <div class="gpu-list-item">
+                    <span style="font-weight: 500; color: #f3f4f6;">${gpu.name}</span>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        ${vramBadge}
+                        <span style="font-size: 0.75rem; background-color: rgba(255,255,255,0.05); padding: 0.1rem 0.4rem; border-radius: 4px; color: ${vendorColor}; border: 1px solid rgba(255,255,255,0.08);">${gpu.vendor.toUpperCase()}</span>
+                        <span style="font-weight: 700; color: #60a5fa; min-width: 32px; text-align: right;">${gpu.perf}%</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function filterGpuDb() {
+        const searchVal = document.getElementById('gpu-search-input').value.toLowerCase().trim();
+        const vendorVal = document.getElementById('gpu-vendor-filter').value;
+
+        const filtered = GPU_DATABASE.filter(gpu => {
+            const matchesSearch = gpu.name.toLowerCase().includes(searchVal);
+            const matchesVendor = vendorVal === 'all' || gpu.vendor.toLowerCase() === vendorVal.toLowerCase();
+            return matchesSearch && matchesVendor;
+        });
+
+        renderGpuDb(filtered);
+    }
 
     function initiateComparison(event, rowId) {
         event.stopPropagation();
@@ -1357,9 +2029,22 @@
         document.getElementById('high-score').innerText = data.highScore;
 
         if (data.lowName === data.highName) {
-            document.getElementById('comparison-narrative').innerHTML = `Both systems run identical underlying core rendering parameters. There is no biological performance gap between these units.`;
-            setCpuPillPassive(`Keep Current`);
-            document.getElementById('target-gpu-pill').innerText = `GPU: Keep Current`;
+            document.getElementById('comparison-narrative').innerHTML = `Both systems run identical underlying core rendering parameters. There is no performance gap between these units.`;
+            
+            const intelPill = document.getElementById('intel-cpu-pill');
+            const geforcePill = document.getElementById('geforce-gpu-pill');
+            const amdPill = document.getElementById('amd-cpu-pill');
+            const radeonPill = document.getElementById('radeon-gpu-pill');
+
+            intelPill.className = "part-pill pill-keep";
+            intelPill.innerText = "Intel CPU: Keep Current";
+            geforcePill.className = "part-pill pill-keep";
+            geforcePill.innerText = "Geforce GPU: Keep Current";
+            amdPill.className = "part-pill pill-keep";
+            amdPill.innerText = "AMD CPU: Keep Current";
+            radeonPill.className = "part-pill pill-keep";
+            radeonPill.innerText = "Radeon GPU: Keep Current";
+
             document.getElementById('path-execution-details').innerText = `To eclipse this structural tie, deploy a slight processing overclock to outpace your mirror target.`;
             openModal();
             abortComparison();
@@ -1376,80 +2061,137 @@
         }
         document.getElementById('comparison-narrative').innerHTML = narrative;
 
-        let recCpu = "";
-        let recGpu = "";
+        let recIntelCpu = "";
+        let recAmdCpu = "";
+        let recGeforceGpu = "";
+        let recRadeonGpu = "";
         let executionText = "";
 
         // Evaluates whether the lower-ranked user already has an equal/better gaming CPU than the target
-        if (data.lowCpuTier >= data.highCpuTier && data.lowPlatform !== 'console' && data.lowPlatform !== 'handheld') {
-            recCpu = "Keep Current";
+        let lowEffectiveTier = data.lowCpuTier;
+        // Intel 9th Gen (i9-9900/9900K) is structurally superior in gaming to a Ryzen 5 5500
+        if (data.lowPlatform === 'intel-9th' && data.highCpu.toLowerCase().includes('5500')) {
+            lowEffectiveTier = Math.max(lowEffectiveTier, data.highCpuTier);
+        }
+
+        if (lowEffectiveTier >= data.highCpuTier && data.lowPlatform !== 'console' && data.lowPlatform !== 'handheld') {
+            recIntelCpu = "Keep Current";
+            recAmdCpu = "Keep Current";
             executionText = `Your processing architecture (<strong>${data.lowCpu}</strong>) is already equal to or structurally superior to <strong>${data.highName}'s</strong> processor (<strong>${data.highCpu}</strong>). You do not need to spend money on a CPU or platform swap to outpace them. A targeted graphics card upgrade alone will completely unchain your system frames and comfortably leapfrog their entire build. `;
         } else {
             // CPU upgrade required to match or surpass target's tier layout
             if (data.highCpuTier === 6) {
                 // Target is Dariush running a Flagship 9950X3D layout
-                recCpu = "Ryzen 9 9950X3D";
+                recAmdCpu = "Ryzen 9 9950X3D";
+                recIntelCpu = "Core Ultra 9 285K";
                 if (data.lowPlatform === 'am5') {
-                    executionText = `Since you are already established on the AM5 platform socket, a direct drop-in upgrade to the flagship <strong>Ryzen 9 9950X3D</strong> is all it takes to match their processing layout without buying a new motherboard. `;
+                    executionText = `Since you are already established on the AM5 platform socket, a direct drop-in upgrade to the flagship <strong>Ryzen 9 9950X3D</strong> is all it takes to match their processing layout. Alternatively, migrating to Intel's flagship <strong>Core Ultra 9 285K</strong> is also a top-tier upgrade pathway. `;
                 } else if (data.lowPlatform === 'console' || data.lowPlatform === 'handheld' || data.lowPlatform === 'prebuilt') {
-                    executionText = `To shatter your restrictive hardware bounds and securely surpass an absolute flagship setup, you must migrate completely to a standard desktop environment tracking the <strong>Ryzen 9 9950X3D</strong>. `;
+                    executionText = `To shatter your restrictive hardware bounds and securely surpass an absolute flagship setup, you must migrate completely to a standard desktop environment tracking the AMD <strong>Ryzen 9 9950X3D</strong> or Intel <strong>Core Ultra 9 285K</strong>. `;
                 } else {
-                    executionText = `To cleanly eclipse an ultra-flagship core of this tier, your old platform cannot carry the required code paths. A full platform overhaul including an AM5 motherboard, DDR5 layout, and the <strong>Ryzen 9 9950X3D</strong> is required. `;
+                    executionText = `To cleanly eclipse an ultra-flagship core of this tier, your old platform cannot carry the required code paths. A full platform overhaul including a modern motherboard, DDR5 layout, and either the AMD <strong>Ryzen 9 9950X3D</strong> or Intel <strong>Core Ultra 9 285K</strong> is required. `;
                 }
             } else if (data.highCpuTier === 5 || data.lowPlatform === 'am5') {
                 // Target is running a high-end 7800X3D, or the lower user is on AM5 but running a weaker non-cache core
-                recCpu = "Ryzen 7 7800X3D";
+                recAmdCpu = "Ryzen 7 7800X3D";
+                recIntelCpu = "Core i9-14900K";
                 if (data.lowPlatform === 'am5') {
-                    executionText = `Since you are already on the AM5 platform, dropping in the definitive gaming king—the <strong>Ryzen 7 7800X3D</strong>—will maximize your processing thresholds and eliminate any background engine stutters. `;
+                    executionText = `Since you are already on the AM5 platform, dropping in the gaming king—the <strong>Ryzen 7 7800X3D</strong>—will maximize your processing thresholds. Intel's high-end <strong>Core i9-14900K</strong> represents an equivalent raw frame powerhouse. `;
                 } else if (data.lowPlatform === 'console' || data.lowPlatform === 'handheld' || data.lowPlatform === 'prebuilt') {
-                    executionText = `To move out of your closed system constraints and match their high-end performance, a full move to a standard desktop PC built around the <strong>Ryzen 7 7800X3D</strong> is required. `;
+                    executionText = `To move out of your closed system constraints and match their high-end performance, a full move to a standard desktop PC built around the <strong>Ryzen 7 7800X3D</strong> or Intel <strong>Core i9-14900K</strong> is required. `;
                 } else {
-                    executionText = `Your current platform cannot host the bandwidth required to beat this tier. A full platform leap to an AM5 motherboard, DDR5 memory, and the <strong>Ryzen 7 7800X3D</strong> is necessary to fully unchain your graphics card. `;
+                    executionText = `Your current platform cannot host the bandwidth required to beat this tier. A platform leap to a modern motherboard and DDR5 setup with either the AMD <strong>Ryzen 7 7800X3D</strong> or Intel <strong>Core i9-14900K</strong> is necessary to fully unchain your graphics card. `;
                 }
             } else {
                 // Target has a Tier 4 or lower CPU, and lower user is on a dead socket
                 if (data.lowPlatform === 'am4-3000' || data.lowPlatform === 'am4' || data.lowPlatform === 'am4-x3d') {
-                    recCpu = "Ryzen 7 5700X3D";
-                    executionText = `Since you are operating on a flexible AM4 Ryzen configuration, a drop-in upgrade to the 3D V-Cache powered <strong>Ryzen 7 5700X3D</strong> is a vastly cheaper alternative to a full PC rebuild. This single swap will instantly vault your gaming performance past theirs. `;
+                    recAmdCpu = "Ryzen 7 5700X3D";
+                    recIntelCpu = "Core i5-14600K";
+                    executionText = `Since you are operating on a flexible AM4 Ryzen configuration, a drop-in upgrade to the 3D V-Cache powered <strong>Ryzen 7 5700X3D</strong> is a vastly cheaper alternative. If you are willing to switch platforms, Intel's <strong>Core i5-14600K</strong> is a superb modern gaming equivalent. `;
                 } else if (data.lowPlatform === 'intel-9th' || data.lowPlatform === 'legacy-intel') {
-                    recCpu = "Ryzen 7 7800X3D";
-                    executionText = `Your old Intel socket is dead-ended. To comfortably surpass their setup, a platform migration to the AM5-based <strong>Ryzen 7 7800X3D</strong> is the smartest long-term play to guarantee you eclipse their performance. `;
+                    recAmdCpu = "Ryzen 7 7800X3D";
+                    recIntelCpu = "Core i7-14700K";
+                    executionText = `Your old Intel socket is dead-ended. To comfortably surpass their setup, a platform migration to the AM5-based <strong>Ryzen 7 7800X3D</strong> or Intel <strong>Core i7-14700K</strong> is the smartest long-term play to guarantee you eclipse their performance. `;
                 } else {
-                    recCpu = "Ryzen 7 7800X3D";
-                    executionText = `To securely outpace their configuration, establishing a core platform foundation around the <strong>Ryzen 7 7800X3D</strong> is highly recommended. `;
+                    recAmdCpu = "Ryzen 7 7800X3D";
+                    recIntelCpu = "Core i7-14700K";
+                    executionText = `To securely outpace their configuration, establishing a core platform foundation around the AMD <strong>Ryzen 7 7800X3D</strong> or Intel <strong>Core i7-14700K</strong> is highly recommended. `;
                 }
             }
         }
 
-        // Target GPU allocation matrices
-        if (data.highScore >= 90) {
-            recGpu = "RTX 5090";
-            executionText += `On the graphics front, matching or beating a modern 90-class titan requires throwing traditional budget value out the window. You must match them directly with a factory-fresh retail <strong>RTX 5090</strong> running unconstrained power limits to capture the pure rasterization lead.`;
-        } else if (data.highScore >= 80) {
-            recGpu = "RTX 5080";
-            executionText += `To securely leapfrog this flagship machine, deploy an <strong>RTX 5080</strong>. Shifting into this ultra-wide, high-bandwidth architecture tier completely outpaces the target setup's raster pipeline.`;
-        } else if (data.highScore >= 65) {
-            recGpu = "RTX 5070 Ti";
-            executionText += `To beat out this high-end A-Tier setup, swap your graphics layout out for a retail <strong>RTX 5070 Ti</strong>. Moving to this tier secures a massive 16GB framework of next-gen GDDR7 memory on a full 256-bit bus, instantly surpassing their processing specs.`;
+        // Target GPU allocation matrices incorporating modern DLSS and FSR 4 capabilities
+        const lowGpuPerf = getGpuPerf(data.lowGpu);
+        const highGpuPerf = getGpuPerf(data.highGpu);
+
+        if (lowGpuPerf >= highGpuPerf) {
+            recGeforceGpu = "Keep Current";
+            recRadeonGpu = "Keep Current";
+            executionText += `On the graphics front, your current GPU (<strong>${data.lowGpu}</strong>, rated at ${lowGpuPerf}%) is already matching or outpacing <strong>${data.highName}'s</strong> GPU (<strong>${data.highGpu}</strong>, rated at ${highGpuPerf}%). You do not need a graphics card upgrade to surpass their setup.`;
         } else {
-            recGpu = "RTX 4070 Super";
-            executionText += `To effortlessly pass this system, deploy a clean <strong>RTX 4070 Super</strong>. This injects modern architectural features and sufficient frame-buffer headroom to instantly out-render the target machine.`;
+            // Find minimum GeForce and Radeon cards to beat the target
+            const gfMatch = GEFORCE_CANDIDATES.find(c => c.perf > highGpuPerf && c.perf > lowGpuPerf);
+            recGeforceGpu = gfMatch ? gfMatch.name : "RTX 5090";
+
+            const rdMatch = RADEON_CANDIDATES.find(c => c.perf > highGpuPerf && c.perf > lowGpuPerf);
+            recRadeonGpu = rdMatch ? rdMatch.name : "RX 9070 XT";
+
+            const gfPerf = getGpuPerf(recGeforceGpu);
+            const rdPerf = getGpuPerf(recRadeonGpu);
+
+            executionText += `To beat their graphics configuration (<strong>${data.highGpu}</strong>, rated at ${highGpuPerf}%), we recommend upgrading to at least an NVIDIA <strong>${recGeforceGpu}</strong> (rated at ${gfPerf}%) or an AMD <strong>${recRadeonGpu}</strong> (rated at ${rdPerf}%). This is the minimum upgrade threshold needed to securely surpass their gaming capability. `;
+
+            // Explain upscaling benefit
+            if (recGeforceGpu.includes("RTX 40") || recGeforceGpu.includes("RTX 50")) {
+                executionText += `Deploying the <strong>${recGeforceGpu}</strong> grants access to NVIDIA's full <strong>DLSS 3/4 suite with Frame Generation</strong>, executing neural reconstructions on dedicated Tensor Cores to effectively double your framerate with pristine clarity. `;
+            } else if (recGeforceGpu.includes("RTX")) {
+                executionText += `The <strong>${recGeforceGpu}</strong> utilizes hardware Tensor Cores to run <strong>DLSS Super Resolution and Ray Reconstruction (DLSS 3.5)</strong>, dramatically cleaning up rendering artifacts and ray-traced lighting compared to traditional spatial scaling. `;
+            }
+
+            if (recRadeonGpu.includes("RX 90")) {
+                executionText += `On the AMD side, the <strong>${recRadeonGpu}</strong> belongs to the next-generation RX 9000 series, featuring dedicated hardware AI Core Accelerators. This allows it to run AMD's advanced <strong>FSR 4 machine-learned temporal upscaling</strong>. Unlike shader-bound FSR 3 on older GPUs, FSR 4 is fully neural-network driven, meaning cards like the 9070 XT can comfortably eclipse raw-raster flagships like the RX 7900 XTX when utilizing FSR 4's superior image reconstruction and massive overhead reduction. `;
+            } else if (recRadeonGpu.includes("RX 70") || recRadeonGpu.includes("RX 60")) {
+                executionText += `On the AMD side, the <strong>${recRadeonGpu}</strong> leverages high-bandwidth <strong>FSR upscaling and frame interpolation</strong>, offering a massive leap in raw rasterization power and thermal efficiency to confidently unchain your game frames. `;
+            }
         }
 
-        const cpuPill = document.getElementById('target-cpu-pill');
-        if (recCpu === "Keep Current") {
-            cpuPill.style.backgroundColor = "rgba(255,255,255,0.05)";
-            cpuPill.style.color = "var(--text-muted)";
-            cpuPill.style.border = "1px solid rgba(255,255,255,0.1)";
-            cpuPill.innerText = `CPU: ${data.lowCpu} (Keep)`;
+        const intelPill = document.getElementById('intel-cpu-pill');
+        const geforcePill = document.getElementById('geforce-gpu-pill');
+        const amdPill = document.getElementById('amd-cpu-pill');
+        const radeonPill = document.getElementById('radeon-gpu-pill');
+
+        if (recIntelCpu === "Keep Current") {
+            intelPill.className = "part-pill pill-keep";
+            intelPill.innerText = "Intel CPU: Keep Current";
         } else {
-            cpuPill.style.backgroundColor = "#10b981";
-            cpuPill.style.color = "#042f1a";
-            cpuPill.style.border = "none";
-            cpuPill.innerText = `CPU: ${recCpu}`;
+            intelPill.className = "part-pill pill-intel";
+            intelPill.innerText = `Intel CPU: ${recIntelCpu}`;
         }
-        
-        document.getElementById('target-gpu-pill').innerText = `GPU: ${recGpu}`;
+
+        if (recAmdCpu === "Keep Current") {
+            amdPill.className = "part-pill pill-keep";
+            amdPill.innerText = "AMD CPU: Keep Current";
+        } else {
+            amdPill.className = "part-pill pill-ryzen";
+            amdPill.innerText = `AMD CPU: ${recAmdCpu}`;
+        }
+
+        if (recGeforceGpu === "Keep Current") {
+            geforcePill.className = "part-pill pill-keep";
+            geforcePill.innerText = "Geforce GPU: Keep Current";
+        } else {
+            geforcePill.className = "part-pill pill-geforce";
+            geforcePill.innerText = `Geforce GPU: ${recGeforceGpu}`;
+        }
+
+        if (recRadeonGpu === "Keep Current") {
+            radeonPill.className = "part-pill pill-keep";
+            radeonPill.innerText = "Radeon GPU: Keep Current";
+        } else {
+            radeonPill.className = "part-pill pill-radeon";
+            radeonPill.innerText = `Radeon GPU: ${recRadeonGpu}`;
+        }
+
         document.getElementById('path-execution-details').innerHTML = executionText;
 
         openModal();
