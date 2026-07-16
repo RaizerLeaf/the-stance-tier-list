@@ -125,10 +125,17 @@
         .tier-header.f { border-left: 6px solid var(--f-tier); color: var(--f-tier); background: linear-gradient(to right, rgba(239, 68, 68, 0.05), transparent); }
 
         table {
+            table-layout: fixed;
             width: 100%;
             border-collapse: collapse;
             text-align: left;
         }
+
+        th:nth-child(1) { width: 8%; }
+        th:nth-child(2) { width: 20%; }
+        th:nth-child(3) { width: 45%; }
+        th:nth-child(4) { width: 15%; } /* This will target VRAM after JS inserts it */
+        th:nth-child(5) { width: 12%; text-align: right; } /* This will target Score after JS inserts VRAM */
 
         th {
             padding: 0.75rem 1.5rem;
@@ -541,10 +548,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="s-2" data-id="s-2" data-name="JC" data-cpu="Ryzen 5700X3D" data-gpu="RTX 5080" data-ram="32GB" data-score="86" data-platform="am4-x3d" data-cpu-tier="4">
+                <tr class="system-row" data-target="s-2" data-id="s-2" data-name="JC" data-cpu="Ryzen 7 5700X3D" data-gpu="RTX 5080" data-ram="32GB" data-score="86" data-platform="am4-x3d" data-cpu-tier="4">
                     <td class="rank">2</td>
                     <td class="name-cell">JC</td>
-                    <td class="specs">Ryzen 5700X3D - RTX 5080 - 32GB</td>
+                    <td class="specs">Ryzen 7 5700X3D - RTX 5080 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">86</span></td>
                 </tr>
                 <tr class="details-row" id="s-2">
@@ -564,10 +571,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="s-3" data-id="s-3" data-name="Satish" data-cpu="Ryzen 5800X" data-gpu="RTX 5070 Ti" data-ram="32GB" data-score="80" data-platform="am4" data-cpu-tier="2">
+                <tr class="system-row" data-target="s-3" data-id="s-3" data-name="Satish" data-cpu="Ryzen 7 5800X" data-gpu="RTX 5070 Ti" data-ram="32GB" data-score="80" data-platform="am4" data-cpu-tier="2">
                     <td class="rank">3</td>
                     <td class="name-cell">Satish</td>
-                    <td class="specs">Ryzen 5800X - RTX 5070 Ti - 32GB</td>
+                    <td class="specs">Ryzen 7 5800X - RTX 5070 Ti - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">80</span></td>
                 </tr>
                 <tr class="details-row" id="s-3">
@@ -622,10 +629,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="a-5" data-id="a-5" data-name="Reilly" data-cpu="Ryzen 5800X" data-gpu="RTX 5070" data-ram="32GB" data-score="74" data-platform="am4" data-cpu-tier="2">
+                <tr class="system-row" data-target="a-5" data-id="a-5" data-name="Reilly" data-cpu="Ryzen 7 5800X" data-gpu="RTX 5070" data-ram="32GB" data-score="74" data-platform="am4" data-cpu-tier="2">
                     <td class="rank">5</td>
                     <td class="name-cell">Reilly</td>
-                    <td class="specs">Ryzen 5800X - RTX 5070 - 32GB</td>
+                    <td class="specs">Ryzen 7 5800X - RTX 5070 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">74</span></td>
                 </tr>
                 <tr class="details-row" id="a-5">
@@ -645,10 +652,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="a-6" data-id="a-6" data-name="Riaz Desk" data-cpu="Ryzen 5800X3D" data-gpu="RTX 3080 Ti" data-ram="32GB" data-score="68" data-platform="am4-x3d" data-cpu-tier="4">
+                <tr class="system-row" data-target="a-6" data-id="a-6" data-name="Riaz Desk" data-cpu="Ryzen 7 5800X3D" data-gpu="RTX 3080 Ti" data-ram="32GB" data-score="68" data-platform="am4-x3d" data-cpu-tier="4">
                     <td class="rank">6</td>
                     <td class="name-cell">Riaz Desk</td>
-                    <td class="specs">Ryzen 5800X3D - RTX 3080 Ti - 32GB</td>
+                    <td class="specs">Ryzen 7 5800X3D - RTX 3080 Ti - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">68</span></td>
                 </tr>
                 <tr class="details-row" id="a-6">
@@ -691,10 +698,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="a-8" data-id="a-8" data-name="Riaz TV" data-cpu="Ryzen 5700X3D" data-gpu="RTX 3080" data-ram="32GB" data-score="64" data-platform="am4-x3d" data-cpu-tier="4">
+                <tr class="system-row" data-target="a-8" data-id="a-8" data-name="Riaz TV" data-cpu="Ryzen 7 5700X3D" data-gpu="RTX 3080" data-ram="32GB" data-score="64" data-platform="am4-x3d" data-cpu-tier="4">
                     <td class="rank">8</td>
                     <td class="name-cell">Riaz TV</td>
-                    <td class="specs">Ryzen 5700X3D - RTX 3080 - 32GB</td>
+                    <td class="specs">Ryzen 7 5700X3D - RTX 3080 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">64</span></td>
                 </tr>
                 <tr class="details-row" id="a-8">
@@ -714,10 +721,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="a-9" data-id="a-9" data-name="Jake" data-cpu="Ryzen 3600X" data-gpu="RTX 5070" data-ram="16GB" data-score="62" data-platform="am4-3000" data-cpu-tier="1">
+                <tr class="system-row" data-target="a-9" data-id="a-9" data-name="Jake" data-cpu="Ryzen 5 3600X" data-gpu="RTX 5070" data-ram="16GB" data-score="62" data-platform="am4-3000" data-cpu-tier="1">
                     <td class="rank">9</td>
                     <td class="name-cell">Jake</td>
-                    <td class="specs">Ryzen 3600X - RTX 5070 - 16GB</td>
+                    <td class="specs">Ryzen 5 3600X - RTX 5070 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">62</span></td>
                 </tr>
                 <tr class="details-row" id="a-9">
@@ -749,10 +756,10 @@
                 <tr><th class="rank">Rank</th><th>Name</th><th>Specs</th><th style="text-align: right;">Score</th></tr>
             </thead>
             <tbody>
-                <tr class="system-row" data-target="b-10" data-id="b-10" data-name="Kyle" data-cpu="Ryzen 5600X" data-gpu="RTX 3080" data-ram="16GB" data-score="58" data-platform="am4" data-cpu-tier="2">
+                <tr class="system-row" data-target="b-10" data-id="b-10" data-name="Kyle" data-cpu="Ryzen 5 5600X" data-gpu="RTX 3080" data-ram="16GB" data-score="58" data-platform="am4" data-cpu-tier="2">
                     <td class="rank">10</td>
                     <td class="name-cell">Kyle</td>
-                    <td class="specs">Ryzen 5600X - RTX 3080 - 16GB</td>
+                    <td class="specs">Ryzen 5 5600X - RTX 3080 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">58</span></td>
                 </tr>
                 <tr class="details-row" id="b-10">
@@ -772,10 +779,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="b-11" data-id="b-11" data-name="Blake" data-cpu="Ryzen 3900X" data-gpu="RTX 3080" data-ram="32GB" data-score="55" data-platform="am4-3000" data-cpu-tier="1">
+                <tr class="system-row" data-target="b-11" data-id="b-11" data-name="Blake" data-cpu="Ryzen 9 3900X" data-gpu="RTX 3080" data-ram="32GB" data-score="55" data-platform="am4-3000" data-cpu-tier="1">
                     <td class="rank">11</td>
                     <td class="name-cell">Blake</td>
-                    <td class="specs">Ryzen 3900X - RTX 3080 - 32GB</td>
+                    <td class="specs">Ryzen 9 3900X - RTX 3080 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">55</span></td>
                 </tr>
                 <tr class="details-row" id="b-11">
@@ -818,10 +825,40 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="b-13" data-id="b-13" data-name="PlayStation 5 Pro" data-cpu="Zen 2 locked" data-gpu="RTX 3070 Ti Custom" data-ram="16GB" data-score="48" data-platform="console" data-cpu-tier="0">
+                                <tr class="system-row" data-target="b-chris" data-id="b-chris" data-name="Chris" data-cpu="Ryzen 7 5800X3D" data-gpu="RTX 3070 Ti" data-ram="32GB" data-score="53" data-platform="am4-x3d" data-cpu-tier="4">
                     <td class="rank">13</td>
+                    <td class="name-cell">Chris</td>
+                    <td class="specs">Ryzen 7 5800X3D - RTX 3070 Ti - 32GB</td>
+                    <td style="text-align: right;"><span class="score-badge">53</span></td>
+                </tr>
+                <tr class="details-row" id="b-chris">
+                    <td colspan="4">
+                        <div class="details-container">
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <div class="metric-value">High</div>
+                                    <div class="metric-label">1440p Capability</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value">Balanced</div>
+                                    <div class="metric-label">System Bottleneck</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value">53/100</div>
+                                    <div class="metric-label">#THE-STANCE Score</div>
+                                </div>
+                            </div>
+                            <div class="upgrade-path">
+                                <strong>Diagnosis:</strong> A very capable 1440p gaming machine. The 5800X3D is still a top-tier gaming CPU.<br>
+                                <strong>Upgrade:</strong> Your CPU is fantastic, but the 8GB of VRAM on the RTX 3070 Ti might limit ultra textures in newer titles. A GPU upgrade (like an RTX 5070 or RTX 4070 Ti Super) would be the next logical step.
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+<tr class="system-row" data-target="b-13" data-id="b-13" data-name="PlayStation 5 Pro" data-cpu="Zen 2 locked" data-gpu="RTX 3070 Ti Custom" data-ram="16GB" data-score="48" data-platform="console" data-cpu-tier="0">
+                    <td class="rank">14</td>
                     <td class="name-cell">PlayStation 5 Pro <span class="console-tag">Console</span></td>
-                    <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 3070 Ti / RX 6800 - 16GB</td>
+                    <td class="specs">Zen 2 locked (~ 3700X) - <span style="white-space: nowrap;">~ RTX 3070 Ti / RX 6800</span> - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">48</span></td>
                 </tr>
                 <tr class="details-row" id="b-13">
@@ -841,10 +878,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="b-14" data-id="b-14" data-name="Ravin" data-cpu="Ryzen 5700X3D" data-gpu="RTX 3060 Ti" data-ram="16GB" data-score="45" data-platform="am4-x3d" data-cpu-tier="4">
-                    <td class="rank">14</td>
+                <tr class="system-row" data-target="b-14" data-id="b-14" data-name="Ravin" data-cpu="Ryzen 7 5700X3D" data-gpu="RTX 3060 Ti" data-ram="16GB" data-score="45" data-platform="am4-x3d" data-cpu-tier="4">
+                    <td class="rank">15</td>
                     <td class="name-cell">Ravin</td>
-                    <td class="specs">Ryzen 5700X3D - RTX 3060 Ti - 16GB</td>
+                    <td class="specs">Ryzen 7 5700X3D - RTX 3060 Ti - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">45</span></td>
                 </tr>
                 <tr class="details-row" id="b-14">
@@ -865,7 +902,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="b-15" data-id="b-15" data-name="John" data-cpu="i9-9900" data-gpu="RTX 3060 Ti" data-ram="32GB" data-score="42" data-platform="intel-9th" data-cpu-tier="1">
-                    <td class="rank">15</td>
+                    <td class="rank">16</td>
                     <td class="name-cell">John</td>
                     <td class="specs">i9-9900 - RTX 3060 Ti - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">42</span></td>
@@ -900,7 +937,7 @@
             </thead>
             <tbody>
                 <tr class="system-row" data-target="c-16" data-id="c-16" data-name="Pawan" data-cpu="Ryzen 5 5500" data-gpu="RTX 2080 Super" data-ram="16GB" data-score="36" data-platform="am4" data-cpu-tier="2">
-                    <td class="rank">16=</td>
+                    <td class="rank">17</td>
                     <td class="name-cell">Pawan</td>
                     <td class="specs">Ryzen 5 5500 - RTX 2080 Super - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">36</span></td>
@@ -922,10 +959,10 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="system-row" data-target="c-17" data-id="c-17" data-name="Alan" data-cpu="Ryzen 3600" data-gpu="RTX 2080 Super" data-ram="16GB" data-score="36" data-platform="am4-3000" data-cpu-tier="1">
-                    <td class="rank">16=</td>
+                <tr class="system-row" data-target="c-17" data-id="c-17" data-name="Alan" data-cpu="Ryzen 5 3600" data-gpu="RTX 2080 Super" data-ram="16GB" data-score="36" data-platform="am4-3000" data-cpu-tier="1">
+                    <td class="rank">17=</td>
                     <td class="name-cell">Alan</td>
-                    <td class="specs">Ryzen 3600 - RTX 2080 Super - 16GB</td>
+                    <td class="specs">Ryzen 5 3600 - RTX 2080 Super - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">36</span></td>
                 </tr>
                 <tr class="details-row" id="c-17">
@@ -946,9 +983,9 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="c-18" data-id="c-18" data-name="PlayStation 5" data-cpu="Zen 2 Custom" data-gpu="RTX 2070 Super Custom" data-ram="16GB" data-score="31" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">18=</td>
+                    <td class="rank">19=</td>
                     <td class="name-cell">PlayStation 5 <span class="console-tag">Console</span></td>
-                    <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 2070 Super / 2080 - 16GB</td>
+                    <td class="specs">Zen 2 locked (~ 3700X) - <span style="white-space: nowrap;">~ RTX 2070 Super / 2080</span> - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">31</span></td>
                 </tr>
                 <tr class="details-row" id="c-18">
@@ -969,9 +1006,9 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="c-19" data-id="c-19" data-name="Xbox Series X" data-cpu="Zen 2 Custom" data-gpu="RTX 2080 Custom" data-ram="16GB" data-score="31" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">18=</td>
+                    <td class="rank">19=</td>
                     <td class="name-cell">Xbox Series X <span class="console-tag">Console</span></td>
-                    <td class="specs">Zen 2 locked (~ 3700X) - ~ RTX 2070 Super / 2080 - 16GB</td>
+                    <td class="specs">Zen 2 locked (~ 3700X) - <span style="white-space: nowrap;">~ RTX 2070 Super / 2080</span> - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">31</span></td>
                 </tr>
                 <tr class="details-row" id="c-19">
@@ -992,7 +1029,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="c-20" data-id="c-20" data-name="Steam Machine" data-cpu="Zen 4 Custom" data-gpu="RDNA 3 Custom" data-ram="16GB" data-score="31" data-platform="prebuilt" data-cpu-tier="0">
-                    <td class="rank">18=</td>
+                    <td class="rank">19=</td>
                     <td class="name-cell">Steam Machine <span class="prebuilt-tag">Prebuilt</span></td>
                     <td class="specs">Semi-custom Zen 4 - Semi-custom RDNA 3 - 16GB</td>
                     <td style="text-align: right;"><span class="score-badge">31</span></td>
@@ -1027,7 +1064,7 @@
             </thead>
             <tbody>
                 <tr class="system-row" data-target="d-21" data-id="d-21" data-name="Amila" data-cpu="i7-8086K" data-gpu="GTX 1080" data-ram="32GB" data-score="20" data-platform="legacy-intel" data-cpu-tier="1">
-                    <td class="rank">21</td>
+                    <td class="rank">22</td>
                     <td class="name-cell">Amila</td>
                     <td class="specs">i7-8086K - GTX 1080 - 32GB</td>
                     <td style="text-align: right;"><span class="score-badge">20</span></td>
@@ -1050,9 +1087,9 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="d-22" data-id="d-22" data-name="Xbox Series S" data-cpu="Zen 2 Custom" data-gpu="GTX 1650S Custom" data-ram="10GB" data-score="15" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">22</td>
+                    <td class="rank">23</td>
                     <td class="name-cell">Xbox Series S <span class="console-tag">Console</span></td>
-                    <td class="specs">Zen 2 locked (~ 3700X) - ~ GTX 1650 Super - 10GB</td>
+                    <td class="specs">Zen 2 locked (~ 3700X) - <span style="white-space: nowrap;">~ GTX 1650 Super</span> - 10GB</td>
                     <td style="text-align: right;"><span class="score-badge">15</span></td>
                 </tr>
                 <tr class="details-row" id="d-22">
@@ -1073,7 +1110,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="d-23" data-id="d-23" data-name="Nintendo Switch 2" data-cpu="ARM Cortex A78C" data-gpu="GTX 1050 Ti Custom" data-ram="12GB" data-score="14" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">23</td>
+                    <td class="rank">24</td>
                     <td class="name-cell">Nintendo Switch 2 <span class="console-tag">Console</span></td>
                     <td class="specs">ARM Cortex A78C - ~ GTX 1050 Ti + DLSS - 12GB</td>
                     <td style="text-align: right;"><span class="score-badge">14</span></td>
@@ -1108,7 +1145,7 @@
             </thead>
             <tbody>
                 <tr class="system-row" data-target="e-24" data-id="e-24" data-name="Xbox One X" data-cpu="Jaguar 8-Core" data-gpu="RX 580 Custom" data-ram="12GB" data-score="13" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">24</td>
+                    <td class="rank">25</td>
                     <td class="name-cell">Xbox One X <span class="console-tag">Console</span></td>
                     <td class="specs">Jaguar 8-core - ~ RX 580 - HDD - 12GB</td>
                     <td style="text-align: right;"><span class="score-badge">13</span></td>
@@ -1131,7 +1168,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="e-25" data-id="e-25" data-name="PlayStation 4 Pro" data-cpu="Jaguar 8-Core" data-gpu="GTX 1060 Custom" data-ram="8GB" data-score="10" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">25=</td>
+                    <td class="rank">26=</td>
                     <td class="name-cell">PlayStation 4 Pro <span class="console-tag">Console</span></td>
                     <td class="specs">Jaguar 8-core - ~ RX 470 / GTX 1060 - HDD - 8GB</td>
                     <td style="text-align: right;"><span class="score-badge">10</span></td>
@@ -1154,7 +1191,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="e-26" data-id="e-26" data-name="MSI Claw 8 AI+" data-cpu="Core Ultra 7 258V" data-gpu="Arc 140V" data-ram="32GB" data-score="10" data-platform="handheld" data-cpu-tier="0">
-                    <td class="rank">25=</td>
+                    <td class="rank">26=</td>
                     <td class="name-cell">MSI Claw 8 AI+ <span class="handheld-tag">Handheld</span></td>
                     <td class="specs">Core Ultra 7 258V - Arc 140V - 32GB shared</td>
                     <td style="text-align: right;"><span class="score-badge">10</span></td>
@@ -1177,7 +1214,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="e-27" data-id="e-27" data-name="Steam Deck" data-cpu="Zen 2 Custom" data-gpu="GTX 1050 Ti Custom" data-ram="16GB" data-score="8" data-platform="handheld" data-cpu-tier="0">
-                    <td class="rank">27</td>
+                    <td class="rank">28</td>
                     <td class="name-cell">Steam Deck <span class="handheld-tag">Handheld</span></td>
                     <td class="specs">Zen 2 4-core - ~ GTX 1050 Ti - 16GB shared - 800p</td>
                     <td style="text-align: right;"><span class="score-badge">8</span></td>
@@ -1212,7 +1249,7 @@
             </thead>
             <tbody>
                 <tr class="system-row" data-target="f-28" data-id="f-28" data-name="PlayStation 4" data-cpu="Jaguar 8-Core" data-gpu="HD 7850 Custom" data-ram="8GB" data-score="7" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">28</td>
+                    <td class="rank">29</td>
                     <td class="name-cell">PlayStation 4 <span class="console-tag">Console</span></td>
                     <td class="specs">Jaguar 8-core - ~ GTX 750 Ti / GTX 1050 - HDD - 8GB</td>
                     <td style="text-align: right;"><span class="score-badge">7</span></td>
@@ -1235,7 +1272,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="f-29" data-id="f-29" data-name="Xbox One S" data-cpu="Jaguar 8-Core" data-gpu="HD 7790 Custom" data-ram="8GB" data-score="5" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">29</td>
+                    <td class="rank">30</td>
                     <td class="name-cell">Xbox One S <span class="console-tag">Console</span></td>
                     <td class="specs">Jaguar 8-core - ~ HD 7790 - HDD - 8GB</td>
                     <td style="text-align: right;"><span class="score-badge">5</span></td>
@@ -1258,7 +1295,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="f-30" data-id="f-30" data-name="Xbox One" data-cpu="Jaguar 8-Core" data-gpu="HD 7770 Custom" data-ram="8GB" data-score="4" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">30</td>
+                    <td class="rank">31</td>
                     <td class="name-cell">Xbox One <span class="console-tag">Console</span></td>
                     <td class="specs">Jaguar 8-core - ~ HD 7770 / GTX 750 - HDD - 8GB</td>
                     <td style="text-align: right;"><span class="score-badge">4</span></td>
@@ -1281,7 +1318,7 @@
                     </td>
                 </tr>
                 <tr class="system-row" data-target="f-31" data-id="f-31" data-name="Nintendo Switch" data-cpu="Tegra X1" data-gpu="Maxwell 256 Cores" data-ram="4GB" data-score="3" data-platform="console" data-cpu-tier="0">
-                    <td class="rank">31</td>
+                    <td class="rank">32</td>
                     <td class="name-cell">Nintendo Switch <span class="console-tag">Console</span></td>
                     <td class="specs">Tegra X1 - 256 Maxwell cores - 4GB - 720p docked</td>
                     <td style="text-align: right;"><span class="score-badge">3</span></td>
