@@ -578,6 +578,47 @@
             line-height: 1.6;
         }
 
+        /* Row expand / collapse indicator (flips when the row is open) */
+        .row-chevron {
+            display: inline-block;
+            width: 0.9rem;
+            height: 0.9rem;
+            margin-left: 0.6rem;
+            vertical-align: middle;
+            color: var(--text-muted);
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .row-chevron svg { width: 100%; height: 100%; display: block; }
+        .system-row:hover .row-chevron { color: var(--text-color); }
+        .system-row.active .row-chevron { transform: rotate(180deg); color: var(--accent); }
+
+        /* Legend: expandable methodology */
+        .legend-details { margin-top: 1rem; }
+        .legend-details summary {
+            cursor: pointer;
+            list-style: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            color: #93c5fd;
+            user-select: none;
+        }
+        .legend-details summary::-webkit-details-marker { display: none; }
+        .legend-details summary::after { content: '▾'; transition: transform 0.2s ease; }
+        .legend-details[open] summary::after { transform: rotate(180deg); }
+        .legend-details .when-open { display: none; }
+        .legend-details[open] .when-open { display: inline; }
+        .legend-details[open] .when-closed { display: none; }
+        .legend-details .legend-grid {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
         @media (max-width: 768px) {
             .stats-grid { grid-template-columns: 1fr; }
             .upgrade-card { grid-column: span 1; }
@@ -597,6 +638,8 @@
             .vram-cell { white-space: normal; font-size: 0.75rem; }
             .vram-shared { display: block; width: max-content; margin: 0.2rem 0 0 0; }
             .legend-wide, .breakdown-card { grid-column: span 1; }
+            .score-cell { white-space: nowrap; }
+            .row-chevron { margin-left: 0.3rem; width: 0.8rem; height: 0.8rem; }
         }
     </style>
 </head>
@@ -613,33 +656,54 @@
         <p class="subtitle">1080p/1440p Bottleneck Adjusted Rankings — Click rows for system breakdowns</p>
     </header>
 
-    <!-- Legend / methodology -->
+    <!-- Legend: plain-language summary, full methodology behind "Show more detail" -->
     <div class="legend">
         <div class="legend-title">How to read this list</div>
         <div class="legend-grid">
-            <div class="legend-item legend-wide">
-                <div class="stat-label">Score formula</div>
-                <div>
-                    <span class="formula">Score = 100 × [1 − (1 − P)<sup>2.8</sup>]</span>, where <strong>P</strong> is the build's performance relative to a reference flagship (RTX 5090 + Ryzen 9 9950X3D on AM5 = 1.0). P multiplies:
-                    <strong>GPU</strong> relative performance (TechPowerUp hierarchy, RTX 5090 = 100%) ·
-                    <strong>features</strong> by upscaling generation (DLSS 4 Multi Frame Gen 1.04, DLSS Frame Gen 1.02, machine-learned upscaling 1.00, shader FSR only 0.98, no ML upscaling and no hardware ray tracing 0.92) ·
-                    <strong>VRAM</strong> (−2.5% per GB under 12 GB; shared console pools count at 75%) ·
-                    <strong>CPU</strong> as √(gaming index ÷ 100), where 100 is a 9950X3D ·
-                    <strong>platform</strong> (AM5 1.02, dead Intel sockets 0.99) ·
-                    <strong>system RAM</strong> (under 32 GB 0.97) ·
-                    <strong>legacy</strong> (platforms no longer receiving current releases 0.80).
-                    The curve flattens toward the top, so flagships stay hard to separate and S stays hard to reach, and is near-linear through the console and mid-range zone. Near-ties go to the newer architecture through the features and platform multipliers. Fixed platforms that cross-platform testing shows at parity, PS5 and Series X, share one effective GPU and CPU rating, and consoles and handhelds are rated on their TV or docked output. Open any row for its full breakdown.
-                </div>
+            <div class="legend-item">
+                <div class="stat-label">Score</div>
+                <div>0 to 100. Higher means the machine runs today's games at 1080p and 1440p with more headroom. The fastest build on the list sets 100.</div>
             </div>
             <div class="legend-item">
-                <div class="stat-label">Tiers</div>
-                <div>Bands are 14 points wide, with S starting at 82, the floor every Nvidia 16GB card clears (<span id="tier-band-summary"></span>). Each band is anchored to a console generation so you can see where a build lands against current-gen and last-gen machines. Nvidia cards with 16GB or more (RTX 5070 Ti and up) are S tier by definition. AMD cards do not follow the VRAM rule; an AMD build is placed by where it lands against the Nvidia cards already on the list.</div>
+                <div class="stat-label">Tier</div>
+                <div>Score bands. S is the flagship class. Every band below it is named after the console generation it plays like, so you can see straight away how a PC stacks up against a PS5 or an Xbox.</div>
             </div>
             <div class="legend-item">
-                <div class="stat-label">Rank, Specs &amp; VRAM</div>
-                <div>Standard competition ranking: tied scores share a rank (marked <strong>=</strong>) and the following number is skipped. Specs read CPU · GPU · system memory; for consoles and handhelds the GPU field shows the architecture and its closest desktop equivalent (<strong>~</strong>), which is also the part the formula and comparison engine use. In the VRAM column, <strong>shared</strong> means one memory pool serves both CPU and GPU.</div>
+                <div class="stat-label">Rank</div>
+                <div>Position on the ladder. Builds with the same score share a rank, shown with <strong>=</strong>, and the next number is skipped.</div>
+            </div>
+            <div class="legend-item">
+                <div class="stat-label">Rows</div>
+                <div>Click any row to open it. Inside you get what the build is good for, what holds it back, the maths behind its score, and the sensible next upgrade.</div>
             </div>
         </div>
+        <details class="legend-details">
+            <summary><span class="when-closed">Show more detail</span><span class="when-open">Show less</span></summary>
+            <div class="legend-grid">
+                <div class="legend-item legend-wide">
+                    <div class="stat-label">Score formula</div>
+                    <div>
+                        <span class="formula">Score = 100 × [1 − (1 − P)<sup>2.8</sup>]</span>, where <strong>P</strong> is the build's performance relative to a reference flagship (RTX 5090 + Ryzen 9 9950X3D on AM5 = 1.0). P multiplies:
+                        <strong>GPU</strong> relative performance (TechPowerUp hierarchy, RTX 5090 = 100%) ·
+                        <strong>features</strong> by upscaling generation (DLSS 4 Multi Frame Gen 1.04, DLSS Frame Gen 1.02, machine-learned upscaling 1.00, shader FSR only 0.98, no ML upscaling and no hardware ray tracing 0.92) ·
+                        <strong>VRAM</strong> (−2.5% per GB under 12 GB; shared console pools count at 75%) ·
+                        <strong>CPU</strong> as √(gaming index ÷ 100), where 100 is a 9950X3D ·
+                        <strong>platform</strong> (AM5 1.02, dead Intel sockets 0.99) ·
+                        <strong>system RAM</strong> (under 32 GB 0.97) ·
+                        <strong>legacy</strong> (platforms no longer receiving current releases 0.80).
+                        The curve flattens toward the top, so flagships stay hard to separate and S stays hard to reach, and is near-linear through the console and mid-range zone. Near-ties go to the newer architecture through the features and platform multipliers. Fixed platforms that cross-platform testing shows at parity, PS5 and Series X, share one effective GPU and CPU rating, and consoles and handhelds are rated on their TV or docked output. Open any row for its full breakdown.
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="stat-label">Tiers</div>
+                    <div>Bands are 14 points wide, with S starting at 82, the floor every Nvidia 16GB card clears (<span id="tier-band-summary"></span>). Each band is anchored to a console generation so you can see where a build lands against current-gen and last-gen machines. Nvidia cards with 16GB or more (RTX 5070 Ti and up) are S tier by definition. AMD cards do not follow the VRAM rule; an AMD build is placed by where it lands against the Nvidia cards already on the list.</div>
+                </div>
+                <div class="legend-item">
+                    <div class="stat-label">Specs &amp; VRAM</div>
+                    <div>Specs read CPU · GPU · system memory; for consoles and handhelds the GPU field shows the architecture and its closest desktop equivalent (<strong>~</strong>), which is also the part the formula and comparison engine use. In the VRAM column, <strong>shared</strong> means one memory pool serves both CPU and GPU, so the figure is not directly comparable to a dedicated card.</div>
+                </div>
+            </div>
+        </details>
         <div class="legend-foot">Data last reviewed 3 September 2026 · fps figures describe rendered frame rate, not display refresh rate.</div>
     </div>
 
@@ -1644,12 +1708,12 @@
         const memoryLabel = `${s.memory} GB ${s.memoryType}${s.unified ? ' shared' : ''}`;
         const rankLabel = `${s.rank}${s.tied ? '=' : ''}`;
         return `
-                <tr class="system-row" data-target="${s.id}" data-id="${s.id}" data-name="${escapeHtml(s.name)}" data-cpu="${escapeHtml(s.cpu)}" data-gpu="${escapeHtml(s.gpuRef)}" data-ram="${s.memory}GB" data-score="${s.score}" data-platform="${s.platform}" data-cpu-tier="${s.cpuTier}">
+                <tr class="system-row" aria-expanded="false" data-target="${s.id}" data-id="${s.id}" data-name="${escapeHtml(s.name)}" data-cpu="${escapeHtml(s.cpu)}" data-gpu="${escapeHtml(s.gpuRef)}" data-ram="${s.memory}GB" data-score="${s.score}" data-platform="${s.platform}" data-cpu-tier="${s.cpuTier}">
                     <td class="rank">${rankLabel}</td>
                     <td class="name-cell">${escapeHtml(s.name)}${badge}</td>
                     <td class="specs"><span class="spec-part">${escapeHtml(s.cpu)}</span> <span class="spec-sep">·</span> <span class="spec-part">${escapeHtml(s.gpu)}</span> <span class="spec-sep">·</span> <span class="spec-part">${memoryLabel}</span></td>
                     <td class="vram-cell">${renderVramCell(s)}</td>
-                    <td class="score-cell"><span class="score-badge">${s.score}</span></td>
+                    <td class="score-cell"><span class="score-badge">${s.score}</span><span class="row-chevron" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l5 5 5-5"/></svg></span></td>
                 </tr>
                 <tr class="details-row" id="${s.id}">
                     <td colspan="5">
@@ -1721,10 +1785,14 @@
                 if (detailsRow) {
                     const isOpen = detailsRow.classList.contains('open');
                     document.querySelectorAll('.details-row').forEach(el => el.classList.remove('open'));
-                    document.querySelectorAll('.system-row').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.system-row').forEach(el => {
+                        el.classList.remove('active');
+                        el.setAttribute('aria-expanded', 'false');
+                    });
                     if (!isOpen) {
                         detailsRow.classList.add('open');
                         row.classList.add('active');
+                        row.setAttribute('aria-expanded', 'true');
                     }
                 }
             });
