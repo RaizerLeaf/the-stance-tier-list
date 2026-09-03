@@ -619,6 +619,18 @@
             border-top: 1px solid var(--border-color);
         }
 
+        /* "Updated" badge: dated field on the entry, auto-hides after 60 days */
+        .updated-tag {
+            font-size: 0.7rem;
+            background-color: #047857;
+            color: #d1fae5;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
         @media (max-width: 768px) {
             .stats-grid { grid-template-columns: 1fr; }
             .upgrade-card { grid-column: span 1; }
@@ -1267,6 +1279,8 @@
     //   platform    socket / ecosystem key used by the comparison engine and the
     //               platform multiplier
     //   legacy      true when the platform no longer receives current releases
+    //   updated     ISO date (YYYY-MM-DD) of the last hardware change; shows an
+    //               "Updated" badge beside the name for UPDATED_BADGE_DAYS, then hides
     //   target      "<res> <preset|upscaler> · <fps>[ / second target][ (catalogue note)]"
     // =====================================================================
 
@@ -1480,6 +1494,7 @@
             cpu: "Ryzen 7 5700X3D", cpuIndex: 76, cpuTier: 4,
             gpu: "RTX 5070", gpuRef: "RTX 5070", upscaler: "mfg",
             vram: 12, memory: 32, memoryType: "DDR4", unified: false, platform: "am4-x3d",
+            updated: "2026-09-03",
             profile: "A fresh rebuild that pairs 3D V-Cache with a current-generation card, the same recipe as JC's build one class down.",
             target: "1440p Ultra · 120–165 fps",
             downside: "The AM4 platform is at its ceiling: DDR4 memory and a socket with no CPU upgrade left.",
@@ -1540,6 +1555,7 @@
             cpu: "i7-8086K", cpuIndex: 60, cpuTier: 1,
             gpu: "RTX 3060 Ti", gpuRef: "RTX 3060 Ti", upscaler: "ml",
             vram: 8, memory: 32, memoryType: "DDR4", unified: false, platform: "legacy-intel",
+            updated: "2026-09-03",
             profile: "A legendary Coffee Lake platform given a second life by an Ampere card, bringing DLSS and hardware ray tracing to a socket that had run out of road.",
             target: "1080p High · 100+ fps / 1440p Medium · 60 fps",
             downside: "The 8GB VRAM ceiling on the RTX 3060 Ti and a dead LGA1151 socket with no drop-in CPU upgrade left.",
@@ -1653,6 +1669,19 @@
         prebuilt: { label: 'Prebuilt', cls: 'prebuilt-tag' }
     };
 
+    // "Updated" badge: shown beside the name for this many days after `updated`, then hidden.
+    const UPDATED_BADGE_DAYS = 60;
+
+    function renderUpdatedBadge(s) {
+        if (!s.updated) return '';
+        const when = new Date(s.updated + 'T00:00:00');
+        if (isNaN(when)) return '';
+        const ageDays = (Date.now() - when.getTime()) / 86400000;
+        if (ageDays < 0 || ageDays > UPDATED_BADGE_DAYS) return '';
+        const label = when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        return ` <span class="updated-tag" title="Hardware updated ${label}">Updated</span>`;
+    }
+
     function escapeHtml(value) {
         return String(value)
             .replace(/&/g, '&amp;')
@@ -1710,7 +1739,7 @@
         return `
                 <tr class="system-row" aria-expanded="false" data-target="${s.id}" data-id="${s.id}" data-name="${escapeHtml(s.name)}" data-cpu="${escapeHtml(s.cpu)}" data-gpu="${escapeHtml(s.gpuRef)}" data-ram="${s.memory}GB" data-score="${s.score}" data-platform="${s.platform}" data-cpu-tier="${s.cpuTier}">
                     <td class="rank">${rankLabel}</td>
-                    <td class="name-cell">${escapeHtml(s.name)}${badge}</td>
+                    <td class="name-cell">${escapeHtml(s.name)}${badge}${renderUpdatedBadge(s)}</td>
                     <td class="specs"><span class="spec-part">${escapeHtml(s.cpu)}</span> <span class="spec-sep">·</span> <span class="spec-part">${escapeHtml(s.gpu)}</span> <span class="spec-sep">·</span> <span class="spec-part">${memoryLabel}</span></td>
                     <td class="vram-cell">${renderVramCell(s)}</td>
                     <td class="score-cell"><span class="score-badge">${s.score}</span><span class="row-chevron" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l5 5 5-5"/></svg></span></td>
