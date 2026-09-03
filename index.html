@@ -630,6 +630,12 @@
             text-transform: uppercase;
             letter-spacing: 0.03em;
         }
+        .breakdown-note {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+            line-height: 1.5;
+        }
 
         @media (max-width: 768px) {
             .stats-grid { grid-template-columns: 1fr; }
@@ -1281,6 +1287,8 @@
     //   legacy      true when the platform no longer receives current releases
     //   updated     ISO date (YYYY-MM-DD) of the last hardware change; shows an
     //               "Updated" badge beside the name for UPDATED_BADGE_DAYS, then hides
+    //   ratingNote  optional sentence shown under the score breakdown explaining a
+    //               rating choice that differs from the hardware on paper
     //   target      "<res> <preset|upscaler> · <fps>[ / second target][ (catalogue note)]"
     // =====================================================================
 
@@ -1520,25 +1528,28 @@
             downside: "Older Zen 2 single-thread performance falls short of what contemporary games ask for.",
             upgrade: "Sinking a bit of cash into a Ryzen 5000 X3D chip is highly recommended for your system. Because you're stepping up from the 3000 series, you get both a generation jump and a cache explosion, making it a much better performance scaling value than for a regular Ryzen 5000 user. Upgrading just the processor is an incredibly cheap alternative to a full PC rebuild and will perfectly stabilize your 1% frame drops. If you are content with your performance targets right now, though, ride it out until you can buy an entirely new PC later."
         },
+        // Series X is listed before PS5 on purpose: the two are rated at parity, and
+        // exact ties keep array order, so the stronger-on-paper hardware sits above.
+        {
+            id: "xbox-series-x", name: "Xbox Series X", deviceClass: "console",
+            cpu: "Zen 2 8-core @ 3.8 GHz", cpuIndex: 52, cpuTier: 0,
+            gpu: "RDNA 2 52 CU (~ RTX 2080 on paper)", gpuRef: "RTX 2070 Super Custom", upscaler: "fsr",
+            vram: 16, memory: 16, memoryType: "GDDR6", unified: true, platform: "console",
+            ratingNote: "Rated at parity with the PS5 (RTX 2070 Super class): most developers optimise for the PS5 first and rarely exploit the wider Series X GPU, so Digital Foundry's cross-platform testing shows the two level. Listed above the PS5 because its hardware is stronger on paper (RTX 2080 class).",
+            profile: "Standard high-capacity console ecosystem delivering consistent baseline frame rates across standardized game ports. On paper the wider GPU should lead, but most developers optimise for the PS5 first, so cross-platform testing puts the two within a few percent of each other and both carry the same effective rating.",
+            target: "4K Dynamic Upscaled · 30–60 fps",
+            downside: "Static hardware block preventing custom feature or performance optimization steps, and a wider GPU that most multi-platform games never fully use.",
+            upgrade: "Consumer component upgrade paths do not exist."
+        },
         {
             id: "ps5", name: "PlayStation 5", deviceClass: "console",
             cpu: "Zen 2 8-core @ 3.5 GHz", cpuIndex: 52, cpuTier: 0,
             gpu: "RDNA 2 36 CU (~ RTX 2070 Super)", gpuRef: "RTX 2070 Super Custom", upscaler: "fsr",
             vram: 16, memory: 16, memoryType: "GDDR6", unified: true, platform: "console",
-            profile: "Baseline current-generation console hardware delivering stable, uniform output across modern shared platforms.",
+            profile: "Baseline current-generation console hardware delivering stable, uniform output across modern shared platforms, and the lead target for most multi-platform developers.",
             target: "4K Dynamic Upscaled · 30–60 fps",
             downside: "Closed operational eco-system lacking any customizable processing components.",
             upgrade: "Component configuration modifications are entirely locked out."
-        },
-        {
-            id: "xbox-series-x", name: "Xbox Series X", deviceClass: "console",
-            cpu: "Zen 2 8-core @ 3.8 GHz", cpuIndex: 52, cpuTier: 0,
-            gpu: "RDNA 2 52 CU (~ RTX 2070 Super)", gpuRef: "RTX 2070 Super Custom", upscaler: "fsr",
-            vram: 16, memory: 16, memoryType: "GDDR6", unified: true, platform: "console",
-            profile: "Standard high-capacity console ecosystem delivering consistent baseline frame rates across standardized game ports. On paper the wider GPU should lead, but Digital Foundry's cross-platform testing puts it within a few percent of the PS5 either way, so both carry the same effective rating.",
-            target: "4K Dynamic Upscaled · 30–60 fps",
-            downside: "Static hardware block preventing custom feature or performance optimization steps.",
-            upgrade: "Consumer component upgrade paths do not exist."
         },
         {
             id: "steam-machine", name: "Steam Machine", deviceClass: "prebuilt",
@@ -1691,7 +1702,8 @@
     }
 
     // Score every system, then apply standard competition ranking:
-    // tied scores share a rank, the next number is skipped.
+    // tied scores share a rank, the next number is skipped. Within a tie the
+    // higher raw performance lists first; an exact tie keeps SYSTEMS array order.
     function computeRankings(systems) {
         systems.forEach(s => { s.parts = scoreSystem(s); s.score = s.parts.score; });
         const sorted = systems.slice().sort((a, b) => b.score - a.score || b.parts.raw - a.parts.raw);
@@ -1750,7 +1762,7 @@
                             <div class="stats-grid">
                                 <div class="stat-card"><div class="stat-label">Profile</div><div class="stat-value">${escapeHtml(s.profile)}</div></div>
                                 <div class="stat-card"><div class="stat-label">Targeted Gameplay</div><div class="stat-value">${escapeHtml(s.target)}</div></div>
-                                <div class="stat-card breakdown-card"><div class="stat-label">Score Breakdown</div><div class="breakdown-value">${escapeHtml(renderBreakdown(s))}</div></div>
+                                <div class="stat-card breakdown-card"><div class="stat-label">Score Breakdown</div><div class="breakdown-value">${escapeHtml(renderBreakdown(s))}</div>${s.ratingNote ? `<div class="breakdown-note">${escapeHtml(s.ratingNote)}</div>` : ''}</div>
                                 <div class="upgrade-card">
                                     <div class="upgrade-content">
                                         <div class="upgrade-title">Upgrade Path</div>
