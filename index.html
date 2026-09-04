@@ -131,9 +131,9 @@
             text-align: left;
         }
 
-        th:nth-child(1) { width: 8%; }
+        th:nth-child(1) { width: 11%; }
         th:nth-child(2) { width: 20%; }
-        th:nth-child(3) { width: 45%; }
+        th:nth-child(3) { width: 42%; }
         th:nth-child(4) { width: 15%; }
         th:nth-child(5) { width: 12%; }
 
@@ -183,7 +183,8 @@
         .rank {
             font-weight: 700;
             color: var(--text-muted);
-            width: 8%;
+            width: 11%;
+            white-space: nowrap;
         }
 
         .name-cell {
@@ -578,12 +579,12 @@
             line-height: 1.6;
         }
 
-        /* Row expand / collapse indicator (flips when the row is open) */
+        /* Row expand / collapse indicator, left of the rank (flips when the row is open) */
         .row-chevron {
             display: inline-block;
             width: 0.9rem;
             height: 0.9rem;
-            margin-left: 0.6rem;
+            margin-right: 0.5rem;
             vertical-align: middle;
             color: var(--text-muted);
             transition: transform 0.2s ease, color 0.2s ease;
@@ -657,7 +658,7 @@
             .vram-shared { display: block; width: max-content; margin: 0.2rem 0 0 0; }
             .legend-wide, .breakdown-card { grid-column: span 1; }
             .score-cell { white-space: nowrap; }
-            .row-chevron { margin-left: 0.3rem; width: 0.8rem; height: 0.8rem; }
+            .row-chevron { margin-right: 0.3rem; width: 0.8rem; height: 0.8rem; }
         }
     </style>
 </head>
@@ -1752,11 +1753,11 @@
         const rankLabel = `${s.rank}${s.tied ? '=' : ''}`;
         return `
                 <tr class="system-row" aria-expanded="false" data-target="${s.id}" data-id="${s.id}" data-name="${escapeHtml(s.name)}" data-cpu="${escapeHtml(s.cpu)}" data-gpu="${escapeHtml(s.gpuRef)}" data-ram="${s.memory}GB" data-score="${s.score}" data-platform="${s.platform}" data-cpu-tier="${s.cpuTier}">
-                    <td class="rank">${rankLabel}</td>
+                    <td class="rank"><span class="row-chevron" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l5 5 5-5"/></svg></span>${rankLabel}</td>
                     <td class="name-cell">${escapeHtml(s.name)}${badge}${renderUpdatedBadge(s)}</td>
                     <td class="specs"><span class="spec-part">${escapeHtml(s.cpu)}</span> <span class="spec-sep">·</span> <span class="spec-part">${escapeHtml(s.gpu)}</span> <span class="spec-sep">·</span> <span class="spec-part">${memoryLabel}</span></td>
                     <td class="vram-cell">${renderVramCell(s)}</td>
-                    <td class="score-cell"><span class="score-badge">${s.score}</span><span class="row-chevron" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l5 5 5-5"/></svg></span></td>
+                    <td class="score-cell"><span class="score-badge">${s.score}</span></td>
                 </tr>
                 <tr class="details-row" id="${s.id}">
                     <td colspan="5">
