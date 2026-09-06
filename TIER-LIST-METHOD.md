@@ -11,7 +11,7 @@ The fastest route is to copy `index.html` from the repo above as the template an
 - One static page, `index.html`, with all CSS and JavaScript inline. No build step, no framework, no external assets except Google Fonts.
 - Hosted with GitHub Pages from the root of the `main` branch. Push to `main` and the page updates within a minute.
 - `server.js` plus `package.json` (Express) exist only for `npm run dev` local preview. GitHub Pages ignores them.
-- Keep the line endings consistent with the file you copy (the original is CRLF).
+- Keep the line endings consistent with the file you copy (the original is CRLF). Any script that slices `index.html` by line should normalise `\r\n` to `\n` first; the ladder check in section 9 does this.
 
 ---
 
@@ -21,7 +21,7 @@ The fastest route is to copy `index.html` from the repo above as the template an
 2. **Header**: title `#THE-STANCE TIER LIST` and subtitle "1080p/1440p Bottleneck Adjusted Rankings — Click rows for system breakdowns". Change the title for the new group.
 3. **Legend** ("How to read this list"): four short cards (Score, Tier, Rank, Rows) and a `<details>` block with the full formula text, tier band explanation, and a Specs & VRAM note. Footer line: "Data last reviewed <date> · fps figures describe rendered frame rate, not display refresh rate."
 4. **Tier ladder** (`<div id="tier-list-root">`): rendered entirely by JavaScript from `SYSTEMS`. One section per tier that has at least one entry. Each section is a table with columns Rank, Name, Specs, VRAM, Score.
-5. **GPU database section**: two tabs. "Relative Power Lookup" (searchable list rendered from `GPU_DATABASE`, vendor filter) and "DLSS vs FSR AI Analysis" (static prose).
+5. **GPU database section**: two tabs. "Relative Power Lookup" (searchable list rendered from `GPU_DATABASE`, vendor filter) and "DLSS vs FSR vs XeSS" (static three-column feature breakdown: for each feature the version that introduced it, a plain-language description, and the card series that can run it, followed by an at-a-glance table and a closing `.fx-callout` paragraph). Everything in that tab is list-independent except the callout, which names the cards and machines on the list and must be rewritten for the new group.
 6. **Comparison modal**: opened by the "Upgrade Comparison" button inside a row, then clicking a second row. Shows both names and scores and a generated narrative about what the lower build needs to reach the higher one.
 
 Rows are click-to-expand. The expanded panel shows: Profile, Targeted Gameplay, Score Breakdown (the multiplied terms, plus an optional rating note), and an Upgrade Path card (Downside, Upgrade, and the comparison button).
@@ -40,6 +40,7 @@ Every row is an object in the `SYSTEMS` array. Scores are never typed by hand; t
     cpu: "Ryzen 7 5700X3D", cpuIndex: 76, cpuTier: 4,
     gpu: "RTX 5080", gpuRef: "RTX 5080", upscaler: "mfg",
     vram: 16, memory: 32, memoryType: "DDR4", unified: false, platform: "am4-x3d",
+    added: "2026-09-05",              // optional
     updated: "2026-09-03",            // optional
     ratingNote: "...",                // optional
     profile: "One or two sentences on what the build is.",
@@ -59,12 +60,13 @@ Every row is an object in the `SYSTEMS` array. Scores are never typed by hand; t
 | `cpuTier` | 0 (locked or legacy) to 6 (flagship X3D). Only used by the comparison engine's upgrade wording. |
 | `gpu` | Display string. For consoles and handhelds: architecture plus closest desktop equivalent, e.g. `RDNA 2 36 CU (~ RTX 2070 Super)`. |
 | `gpuRef` | The part fed to the GPU lookup. For fixed hardware add the suffix ` Custom` (e.g. `RTX 2070 Super Custom`); the lookup strips it and the word marks the GPU as shared or unified. |
-| `upscaler` | `mfg` (DLSS 4 Multi Frame Gen, RTX 50), `fg` (DLSS Frame Gen, RTX 40), `ml` (machine-learned upscaling: RTX 20/30, PSSR, XeSS, Switch 2 DLSS), `fsr` (shader upscaling only: RDNA 2/3), `none` (no ML upscaling and no hardware RT: Pascal, GCN, Maxwell). |
+| `upscaler` | `mfg` (DLSS 4 Multi Frame Gen, RTX 50), `fg` (DLSS Frame Gen, RTX 40), `ml` (machine-learned upscaling: RTX 20/30, RX 7000 via FSR 4.1, RX 9000, PSSR, XeSS on Intel Arc, Switch 2 DLSS), `fsr` (shader upscaling only: RDNA 2 and older Radeons with RT), `none` (no ML upscaling and no hardware RT: Pascal, GCN, Maxwell). Intel Arc has XeSS 3 multi-frame generation but stays `ml`; see section 7. |
 | `vram` | Dedicated graphics memory in GB. For unified systems, the size of the shared pool. |
 | `memory`, `memoryType` | System RAM in GB and type, e.g. `DDR4`, `GDDR6`, `LPDDR5X`. |
 | `unified` | `true` when CPU and GPU share one memory pool (consoles, handhelds). |
 | `platform` | `am5`, `am5-x3d`, `am4`, `am4-x3d`, `intel-9th`, `legacy-intel`, `console`, `handheld`, `prebuilt`. Drives the platform multiplier and the comparison engine's advice. |
 | `legacy` | `true` when the platform no longer receives current releases (PS4, Xbox One, Switch 1). |
+| `added` | ISO date the entry joined the list. Shows a "New" badge beside the name for 60 days, then hides itself. Both badges can show at once. |
 | `updated` | ISO date of the last hardware change. Shows an "Updated" badge beside the name for 60 days, then hides itself. |
 | `ratingNote` | Optional sentence under the breakdown explaining a rating that differs from the hardware on paper. |
 | `target` | Format: `<res> <preset or upscaler> · <fps>[ / second target][ (catalogue note)]`. |
@@ -264,7 +266,8 @@ These are decisions that the formula encodes or that were settled by hand. Apply
 - **Fixed platforms that testing shows below their paper spec** get a `gpuRef` that matches measured results, plus a `ratingNote` citing the source (the Steam Machine is rated just below an RX 7600 for this reason).
 - **Switch 2 sits at the top of F**, above the Xbox One X, because it has ML upscaling and runs current releases.
 - **Use the `Custom` suffix on every console or handheld gpuRef** so the lookup treats it as shared hardware.
-- **Set `updated`** to the date of any hardware change so the badge appears for 60 days.
+- **Set `updated`** to the date of any hardware change, and `added` on every new entry, so the badges appear for 60 days.
+- **Upscaler ratings follow upscaler quality, not the presence of a frame-generation mode.** RX 7000 cards rate `ml` now that FSR 4.1 (June 2026) runs machine-learned upscaling on RDNA 3; RX 6000 and older stay `fsr`. Intel Arc, including the Arc 140V in the MSI Claw 8 AI+, stays `ml` even though XeSS 3 offers 3X/4X multi-frame generation, because `mfg` and `fg` mark the DLSS 4 and DLSS 3 quality tiers rather than the existence of a multiplier. Apply this the same way on every list.
 
 ### Upgrade path wording (as of September 2026)
 
@@ -291,4 +294,28 @@ Write profile, downside, and upgrade in plain, slightly enthusiastic prose. One 
 4. Replace the desktop entries in `SYSTEMS` with the new group's builds, one object each, following the field guide in section 3. Pick `cpuIndex` from the table in section 6 and look up any new CPU from published 1080p averages. Confirm every `gpuRef` resolves to a non-zero value in `GPU_DATABASE`.
 5. Open the page locally (`npm install` then `npm run dev`, or just open the file) and read each row's Score Breakdown to check the terms look right.
 6. Sanity-check the ladder against the rules in section 7: every Nvidia 16 GB card in S, consoles in the bands their tier labels name, no hand-typed numbers anywhere.
-7. Commit and push. Do not run any script that rewrites `index.html` unless you have read what it does first.
+7. Run the ladder check in section 9 and read the output against step 6.
+8. Commit and push. Do not run any script that rewrites `index.html` unless you have read what it does first.
+
+---
+
+## 9. Ladder check
+
+Run this with Node from the repo root. It prints the ranked ladder with tier headings and badge state, and lists any `gpuRef` that resolves to 0. It only reads `index.html`.
+
+```js
+const fs = require('fs');
+const html = fs.readFileSync('index.html', 'utf8').replace(/\r\n/g, '\n');
+const script = html.slice(html.indexOf('<script>') + 8, html.lastIndexOf('</script>'));
+const src = script.replace(/document\.addEventListener\('DOMContentLoaded'[\s\S]*?\n    \}\);\n/, '');
+const ctx = {};
+new Function('module', src + '\n; module.out = { SYSTEMS, computeRankings, getGpuPerf, TIERS, renderNewBadge, renderUpdatedBadge };')(ctx);
+const { SYSTEMS, computeRankings, getGpuPerf, TIERS, renderNewBadge, renderUpdatedBadge } = ctx.out;
+console.log('unresolved gpuRefs:', SYSTEMS.filter(s => getGpuPerf(s.gpuRef) === 0).map(s => s.id));
+let tier = null;
+for (const s of computeRankings(SYSTEMS)) {
+  if (s.tier !== tier) { tier = s.tier; console.log('\n== ' + TIERS.find(t => t.key === tier).label); }
+  console.log(String(s.rank + (s.tied ? '=' : '')).padStart(4), String(s.score).padStart(3), s.name.padEnd(20),
+    (renderNewBadge(s) ? 'NEW ' : '') + (renderUpdatedBadge(s) ? 'UPDATED' : ''));
+}
+```

@@ -494,6 +494,35 @@
             margin-top: 3rem;
         }
 
+        /* DLSS vs FSR vs XeSS feature breakdown */
+        .fx-columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+        .fx-col { border-radius: 8px; padding: 1rem; min-width: 0; }
+        .fx-col-dlss { background-color: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); }
+        .fx-col-fsr { background-color: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); }
+        .fx-col-xess { background-color: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.15); }
+        .fx-col-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .fx-col-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+        .fx-block { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+        .fx-block:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        .fx-block-muted { opacity: 0.8; }
+        .fx-name { font-weight: 700; font-size: 0.92rem; color: var(--text-color); }
+        .fx-meta { font-size: 0.76rem; color: #93c5fd; margin: 0.15rem 0 0.4rem 0; }
+        .fx-desc { font-size: 0.84rem; color: #cbd5e1; margin-bottom: 0.4rem; }
+        .fx-list { list-style: none; margin: 0; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.76rem; color: var(--text-color); }
+        .fx-list li { padding: 0.15rem 0 0.15rem 1rem; position: relative; }
+        .fx-list li::before { content: "\25B8"; position: absolute; left: 0; color: var(--text-muted); }
+        .fx-note { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.4rem; }
+        .fx-matrix-wrap { overflow-x: auto; }
+        .fx-matrix { width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: auto; }
+        .fx-matrix th, .fx-matrix td { padding: 0.5rem 0.6rem; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.06); vertical-align: top; }
+        .fx-matrix th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); background: none; }
+        .fx-matrix td:first-child { font-weight: 600; white-space: nowrap; }
+        .fx-callout { margin-top: 1.25rem; padding: 0.9rem 1rem; border-radius: 8px; background-color: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.15); font-size: 0.88rem; color: #cbd5e1; }
+        @media (max-width: 900px) {
+            .fx-columns { grid-template-columns: 1fr; }
+            .fx-matrix td:first-child { white-space: normal; }
+        }
+
         /* Specs column: wrap only at field boundaries */
         .spec-part { white-space: nowrap; }
         .spec-sep { color: #4b5563; }
@@ -631,6 +660,17 @@
             text-transform: uppercase;
             letter-spacing: 0.03em;
         }
+        /* "New" badge: same timed behaviour as "Updated", driven by the entry's added date */
+        .new-tag {
+            font-size: 0.7rem;
+            background-color: #1d4ed8;
+            color: #dbeafe;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
         .breakdown-note {
             font-size: 0.78rem;
             color: var(--text-muted);
@@ -681,7 +721,7 @@
         <div class="legend-grid">
             <div class="legend-item">
                 <div class="stat-label">Score</div>
-                <div>0 to 100. Higher means the machine runs today's games at 1080p and 1440p with more headroom. The fastest build on the list sets 100.</div>
+                <div>0 to 100. Higher means the machine runs today's games at 1080p and 1440p with more headroom. A reference flagship (RTX 5090 with a Ryzen 9 9950X3D) sets 100.</div>
             </div>
             <div class="legend-item">
                 <div class="stat-label">Tier</div>
@@ -723,7 +763,7 @@
                 </div>
             </div>
         </details>
-        <div class="legend-foot">Data last reviewed 3 September 2026 · fps figures describe rendered frame rate, not display refresh rate.</div>
+        <div class="legend-foot">Data last reviewed 5 September 2026 · fps figures describe rendered frame rate, not display refresh rate.</div>
     </div>
 
     <!-- Tier ladder: rendered from the SYSTEMS array in the script below -->
@@ -737,7 +777,7 @@
         <div class="gpu-db-container" style="background-color: var(--card-bg); border-radius: 0 0 12px 12px; padding: 1.5rem; border: 1px solid var(--border-color); border-top: none;">
             <div class="gpu-tabs" style="display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
                 <button class="gpu-tab-btn active" id="btn-gpu-perf-lookup" onclick="switchGpuTab('gpu-perf-lookup')">Relative Power Lookup</button>
-                <button class="gpu-tab-btn" id="btn-gpu-tech-scaling" onclick="switchGpuTab('gpu-tech-scaling')">DLSS vs FSR AI Analysis</button>
+                <button class="gpu-tab-btn" id="btn-gpu-tech-scaling" onclick="switchGpuTab('gpu-tech-scaling')">DLSS vs FSR vs XeSS</button>
             </div>
 
             <!-- Tab 1: Relative Power Lookup -->
@@ -759,29 +799,204 @@
                 </div>
             </div>
 
-            <!-- Tab 2: DLSS vs FSR AI Analysis -->
+            <!-- Tab 2: DLSS vs FSR vs XeSS feature breakdown -->
             <div id="gpu-tech-scaling" class="gpu-tab-content" style="display: none; line-height: 1.6; font-size: 0.95rem; color: #e2e8f0;">
-                <h4 style="font-weight: 600; color: #3b82f6; margin-bottom: 0.5rem;">The AI Scaling Revolution: DLSS vs FSR</h4>
-                <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;">
-                    While raw rasterization defines traditional graphics pipelines, contemporary software leverages temporal upscalers to completely transform game performance.
+                <h4 style="font-weight: 600; color: #3b82f6; margin: 0 0 0.5rem 0;">DLSS vs FSR vs XeSS: what each does and which cards get it</h4>
+                <p style="margin-bottom: 1.25rem; color: var(--text-muted); font-size: 0.9rem;">
+                    All three are families of features, not single switches. Each block below names the feature, the version that introduced it, and the card series that can run it. The score's <strong>features</strong> multiplier follows the same ladder: Multi Frame Gen 1.04, Frame Gen 1.02, machine-learned upscaling 1.00, shader FSR only 0.98, no ML upscaling and no hardware RT 0.92.
                 </p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="stats-grid">
-                    <div style="background-color: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 8px; padding: 1rem;">
-                        <strong style="color: #10b981; font-size: 1.05rem; display: block; margin-bottom: 0.5rem;">NVIDIA DLSS (Deep Learning Super Sampling)</strong>
-                        <ul style="list-style: disc; margin-left: 1.2rem; font-size: 0.9rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 0.5rem;">
-                            <li><strong>Hardware-Accelerated ML:</strong> Dedicated Tensor Cores execute local deep learning models, reconstructing crystal-clear frames with virtually zero ghosting artifacts.</li>
-                            <li><strong>Frame Generation (DLSS 3):</strong> Exclusive to RTX 40 and 50 series, injecting entire AI-generated frames to double framerates.</li>
-                            <li><strong>Ray Reconstruction (DLSS 3.5/4):</strong> Extends temporal stabilization and maximizes lighting accuracy in real-time ray-traced engines.</li>
-                        </ul>
+
+                <div class="fx-columns">
+                    <!-- DLSS column -->
+                    <div class="fx-col fx-col-dlss">
+                        <div class="fx-col-title" style="color: #10b981;">NVIDIA DLSS</div>
+                        <div class="fx-col-sub">Deep Learning Super Sampling · runs on Tensor Cores, so GeForce RTX only. GTX 10 and GTX 16 cards have no Tensor Cores and get no DLSS at all.</div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Super Resolution and DLAA</div>
+                            <div class="fx-meta">Introduced: DLSS 2 (March 2020). DLSS 1 (2018) was trained per game and is retired. Rebuilt on a transformer model in DLSS 4 (January 2025); second-generation transformer in DLSS 4.5 (January 2026). DLAA is the same model run at native resolution as anti-aliasing.</div>
+                            <div class="fx-desc">Renders at a lower internal resolution and reconstructs the output frame with an AI model and motion vectors. The biggest single performance win in the set.</div>
+                            <ul class="fx-list">
+                                <li>RTX 20</li>
+                                <li>RTX 30</li>
+                                <li>RTX 40</li>
+                                <li>RTX 50</li>
+                            </ul>
+                            <div class="fx-note">RTX 20 and 30 lack FP8 support, so the DLSS 4 and 4.5 transformer models cost them a few percent more than the older CNN model did.</div>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Ray Reconstruction</div>
+                            <div class="fx-meta">Introduced: DLSS 3.5 (September 2023). Transformer model in DLSS 4 (January 2025).</div>
+                            <div class="fx-desc">Replaces hand-tuned ray-tracing denoisers with an AI denoiser, cleaning up reflections, shadows and path-traced lighting. Despite the 3.5 name it does not need Frame Generation hardware.</div>
+                            <ul class="fx-list">
+                                <li>RTX 20</li>
+                                <li>RTX 30</li>
+                                <li>RTX 40</li>
+                                <li>RTX 50</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Frame Generation (2X)</div>
+                            <div class="fx-meta">Introduced: DLSS 3 (October 2022). Moved from the Optical Flow Accelerator to an AI model in DLSS 4 (January 2025), which lowered its VRAM cost.</div>
+                            <div class="fx-desc">Inserts one AI-generated frame between every two rendered frames. Doubles displayed frame rate but not responsiveness, so it works best when the base frame rate is already 50 to 60 fps or more.</div>
+                            <ul class="fx-list">
+                                <li>RTX 40</li>
+                                <li>RTX 50</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Multi Frame Generation (3X, 4X, 6X)</div>
+                            <div class="fx-meta">Introduced: DLSS 4 (January 2025) with 3X and 4X modes. DLSS 4.5 (spring 2026) added the 6X mode and Dynamic Multi Frame Generation, which picks the multiplier to match your monitor's refresh rate.</div>
+                            <div class="fx-desc">Generates up to five frames per rendered frame. This is why an RTX 50 card earns the 1.04 features multiplier over an RTX 40 card's 1.02.</div>
+                            <ul class="fx-list">
+                                <li>RTX 50</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block fx-block-muted">
+                            <div class="fx-name">Reflex (latency reduction)</div>
+                            <div class="fx-meta">Introduced: September 2020. Reflex 2 with Frame Warp was announced at CES 2025 for RTX 50 first with older RTX to follow, and is still unreleased as of September 2026.</div>
+                            <div class="fx-desc">Not part of DLSS but always bundled with Frame Generation to claw back the latency it adds. Base Reflex works on GTX 900 and newer.</div>
+                        </div>
                     </div>
-                    <div style="background-color: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 8px; padding: 1rem;">
-                        <strong style="color: #ef4444; font-size: 1.05rem; display: block; margin-bottom: 0.5rem;">AMD FSR (FidelityFX Super Resolution)</strong>
-                        <ul style="list-style: disc; margin-left: 1.2rem; font-size: 0.9rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 0.5rem;">
-                            <li><strong>The RX 9000 & FSR 4 Shift:</strong> FSR 4 introduces <em>fully machine-learned temporal upscaling</em>, departing from the hand-crafted hand-tuned heuristics of FSR 3.</li>
-                            <li><strong>AI Core Accelerators:</strong> RX 9000 uses dedicated AI accelerator blocks in the compute units to execute FSR 4's neural networks with near-zero latency.</li>
-                            <li><strong>FSR 4 vs FSR 3 Breakthrough:</strong> Despite having a smaller 192-bit bus and 16GB VRAM compared to the legacy RX 7900 XTX's 384-bit bus and 24GB VRAM, the <strong>Radeon RX 9070 XT</strong> comfortably outperforms the RX 7900 XTX in modern gaming when utilizing ML-driven FSR 4. The 7900 XTX is limited to shader-bound FSR 3 algorithms, resulting in higher rendering overhead and softer image outputs.</li>
-                        </ul>
+
+                    <!-- FSR column -->
+                    <div class="fx-col fx-col-fsr">
+                        <div class="fx-col-title" style="color: #ef4444;">AMD FSR</div>
+                        <div class="fx-col-sub">FidelityFX Super Resolution · open source. FSR 1 to 3.1 run as ordinary shader code on almost any GPU, including GeForce GTX and RTX and Intel Arc. FSR 4 and Redstone are machine-learned and need Radeon hardware with AI accelerators.</div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Spatial upscaling</div>
+                            <div class="fx-meta">Introduced: FSR 1 (June 2021).</div>
+                            <div class="fx-desc">A single-frame sharpening upscaler with no motion data. Cheap and universal, but soft and shimmery next to everything that followed. Still the fallback in games that only ship FSR 1.</div>
+                            <ul class="fx-list">
+                                <li>Radeon RX 400 and newer, plus Ryzen integrated graphics</li>
+                                <li>GeForce GTX 900, GTX 10, GTX 16</li>
+                                <li>GeForce RTX 20, 30, 40, 50</li>
+                                <li>Intel Arc and Intel integrated graphics</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Temporal upscaling (shader-based)</div>
+                            <div class="fx-meta">Introduced: FSR 2 (May 2022). Improved in FSR 3 (September 2023) and FSR 3.1 (June 2024), which fixed most of the ghosting and made the upscaler swappable with DLSS in the same game.</div>
+                            <div class="fx-desc">Uses motion vectors and previous frames like DLSS, but with hand-written maths instead of a neural network. Good at Quality mode, visibly worse than DLSS at Performance mode. This is what the <strong>fsr</strong> rating (0.98) on the ladder means.</div>
+                            <ul class="fx-list">
+                                <li>Radeon RX 500 minimum, RX 5000 and newer recommended</li>
+                                <li>GeForce GTX 10 minimum, GTX 16 recommended</li>
+                                <li>GeForce RTX 20, 30, 40, 50 (though DLSS is the better choice on these)</li>
+                                <li>Intel Arc</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Frame Generation (shader-based)</div>
+                            <div class="fx-meta">Introduced: FSR 3 (September 2023). Decoupled from the upscaler in FSR 3.1 (June 2024), so an RTX 20 or 30 card can run DLSS Super Resolution and FSR Frame Generation together.</div>
+                            <div class="fx-desc">Interpolates one frame between two rendered frames using async compute shaders. Needs a solid 60 fps base to look right. AMD Fluid Motion Frames (AFMF) is the driver-level version that works in any game on RX 6000 and newer, at lower quality.</div>
+                            <ul class="fx-list">
+                                <li>Radeon RX 5000 minimum, RX 6000 and newer recommended</li>
+                                <li>GeForce RTX 20 minimum, RTX 30 and newer recommended</li>
+                                <li>GeForce GTX 10 and 16: runs but not recommended, the cards are too slow to hold the base frame rate</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Machine-learned upscaling</div>
+                            <div class="fx-meta">Introduced: FSR 4 (March 2025), RX 9000 only. FSR 4.1 (June 2026) extended it to RX 7000 with a model tuned for RDNA 3.</div>
+                            <div class="fx-desc">AMD's answer to DLSS Super Resolution: a neural network run on the AI accelerators inside RDNA 4 and RDNA 3 compute units. Image quality is close to the DLSS 3 CNN model and well ahead of FSR 3.1. Games built on FSR 3.1 can be upgraded to FSR 4 through the Adrenalin driver.</div>
+                            <ul class="fx-list">
+                                <li>Radeon RX 9000</li>
+                                <li>Radeon RX 7000 (FSR 4.1 and later)</li>
+                                <li>Not available on RX 6000 and older, GeForce GTX or RTX, or Intel Arc; those cards fall back to FSR 3.1</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Redstone: ML Frame Generation, Ray Regeneration, Radiance Caching</div>
+                            <div class="fx-meta">Introduced: FSR Redstone (December 2025). Ray Regeneration is AMD's equivalent of Ray Reconstruction. Radiance Caching, a neural cache for ray-traced global illumination, was announced alongside but held back to 2026 and was not part of the December release.</div>
+                            <div class="fx-desc">Moves frame generation and the ray-tracing denoiser onto neural networks. ML Frame Generation is a clear step up from the FSR 3.1 interpolator, and there is no multi-frame mode yet.</div>
+                            <ul class="fx-list">
+                                <li>Radeon RX 9000</li>
+                                <li>RX 7000 and older get the shader-based FSR 3.1 fallback for frame generation and no Ray Regeneration</li>
+                            </ul>
+                        </div>
                     </div>
+
+                    <!-- XeSS column -->
+                    <div class="fx-col fx-col-xess">
+                        <div class="fx-col-title" style="color: #3b82f6;">INTEL XeSS</div>
+                        <div class="fx-col-sub">Xe Super Sampling · every feature is a neural network with two code paths. The <strong>XMX</strong> path runs on the matrix engines in Intel Arc and is the full-quality version. The <strong>DP4a</strong> path runs the same network as integer shader maths on any GPU with Shader Model 6.4, so on paper GeForce GTX 10 and newer and Radeon RX 5000 and newer can use XeSS too, a little slower and slightly softer. In practice RTX 30 and RX 6000 or newer are where the DP4a path runs at full rate.</div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Super Resolution (XeSS-SR)</div>
+                            <div class="fx-meta">Introduced: XeSS 1.0 (October 2022, with the Arc A770 and A750). Quality and preset updates through XeSS 1.3 (April 2024), which added Ultra Performance and Native AA modes.</div>
+                            <div class="fx-desc">Machine-learned temporal upscaling in the same family as DLSS Super Resolution and FSR 4. On the XMX path it sits between FSR 3.1 and DLSS in image quality; on DP4a it is still usually cleaner than FSR 3.1, which makes it the best free upgrade for RX 6000 and GTX 16 owners in games that ship it.</div>
+                            <ul class="fx-list">
+                                <li>XMX: Intel Arc A-series, Arc B-series, Arc graphics in Core Ultra laptops and handhelds (Meteor Lake, Lunar Lake, Arrow Lake, Panther Lake)</li>
+                                <li>DP4a: GeForce GTX 10, GTX 16, RTX 20, 30, 40, 50</li>
+                                <li>DP4a: Radeon RX 5000, 6000, 7000, 9000</li>
+                                <li>DP4a: Intel Xe integrated graphics (11th gen and newer)</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Ray-tracing denoiser</div>
+                            <div class="fx-meta">Not offered as of September 2026.</div>
+                            <div class="fx-desc">Intel has no shipping equivalent of Ray Reconstruction or Ray Regeneration; games on Arc use their own denoisers.</div>
+                            <ul class="fx-list">
+                                <li>None</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Frame Generation (XeSS-FG) and Low Latency (XeLL)</div>
+                            <div class="fx-meta">Introduced: XeSS 2 (December 2024, with the Arc B580), Intel Arc only. XeSS 2.1 (August 2025) added a DP4a path so Nvidia and AMD cards can run it too, with XeLL enabled whenever frame generation is on.</div>
+                            <div class="fx-desc">One AI-generated frame between two rendered frames, plus a Reflex-style latency mode. On Arc the interpolation runs on the XMX matrix engines; on Nvidia and AMD it runs as compute shaders, closer to FSR 3.1 Frame Generation in cost and look.</div>
+                            <ul class="fx-list">
+                                <li>XMX: Intel Arc A-series, Arc B-series, Arc graphics in Core Ultra processors</li>
+                                <li>DP4a: GeForce GTX 10, GTX 16, RTX 20, 30, 40, 50</li>
+                                <li>DP4a: Radeon RX 5000, 6000, 7000, 9000</li>
+                            </ul>
+                        </div>
+
+                        <div class="fx-block">
+                            <div class="fx-name">Multi Frame Generation (3X, 4X)</div>
+                            <div class="fx-meta">Introduced: XeSS 3 (January 2026, with the Core Ultra Series 3 Panther Lake launch). Driver updates in January and February 2026 turned it on for every game that already supports XeSS 2 frame generation.</div>
+                            <div class="fx-desc">Up to three AI-generated frames per rendered frame. Intel hardware only so far; there is no DP4a path for the multi-frame mode. Intel's B-series discrete cards and Panther Lake handhelds are the parts that gain the 1.04 rating from this.</div>
+                            <ul class="fx-list">
+                                <li>Intel Arc B-series (Battlemage)</li>
+                                <li>Intel Arc A-series (Alchemist)</li>
+                                <li>Arc graphics in Core Ultra processors (Meteor Lake, Lunar Lake, Arrow Lake-H, Panther Lake)</li>
+                                <li>Not available on GeForce or Radeon cards</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fx-matrix-wrap">
+                    <div class="modal-section-title" style="margin-top: 1.5rem;">At a glance</div>
+                    <table class="fx-matrix">
+                        <thead>
+                            <tr><th>Feature</th><th>DLSS version · cards</th><th>FSR version · cards</th><th>XeSS version · cards</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Spatial upscaling</td><td>Never offered</td><td>FSR 1 (2021) · anything</td><td>Never offered</td></tr>
+                            <tr><td>Temporal upscaling, shader</td><td>Never offered</td><td>FSR 2 (2022), 3.1 (2024) · RX 500+, GTX 10+, all RTX, Arc</td><td>Never offered</td></tr>
+                            <tr><td>Machine-learned upscaling</td><td>DLSS 2 (2020), transformer in DLSS 4 (2025), 4.5 (2026) · RTX 20, 30, 40, 50</td><td>FSR 4 (2025) · RX 9000; FSR 4.1 (2026) · RX 7000</td><td>XeSS 1.0 (2022) · Arc on XMX; GTX 10+, all RTX, RX 5000+ on DP4a</td></tr>
+                            <tr><td>Ray-tracing denoiser</td><td>Ray Reconstruction, DLSS 3.5 (2023) · RTX 20, 30, 40, 50</td><td>Ray Regeneration, Redstone (2025) · RX 9000</td><td>Not offered</td></tr>
+                            <tr><td>Frame generation, shader</td><td>Never offered</td><td>FSR 3 (2023), 3.1 (2024) · RX 5000+, RTX 20+</td><td>XeSS 2.1 (2025) DP4a path · GTX 10+, all RTX, RX 5000+</td></tr>
+                            <tr><td>Frame generation, ML</td><td>DLSS 3 (2022) · RTX 40, 50</td><td>Redstone (2025) · RX 9000</td><td>XeSS 2 (2024) · Arc A, Arc B, Core Ultra Arc</td></tr>
+                            <tr><td>Multi frame generation</td><td>DLSS 4 (2025) 3X/4X, DLSS 4.5 (2026) 6X · RTX 50</td><td>Not yet</td><td>XeSS 3 (2026) 3X/4X · Arc A, Arc B, Core Ultra Arc</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="fx-callout">
+                    <strong>What this means for the builds on this list.</strong>
+                    The RTX 20 and 30 cards here (2080 Super, 3060 Ti, 3070 Ti, 3080, 3080 Ti) get DLSS Super Resolution and Ray Reconstruction, and can have frame generation today by pairing DLSS upscaling with FSR 3.1 or XeSS 2.1 Frame Generation in games that ship either one. The RTX 50 cards (5070, 5070 Ti, 5080, 5090) get the full set including Multi Frame Generation, which is the 1.04 <strong>features</strong> multiplier. The PS5, Xbox Series X and S, Steam Machine and Steam Deck are on shader FSR 3.1: solid upscaling at Quality mode, shader frame generation, no ML denoiser. The PS5 Pro has Sony's own PSSR neural upscaler and the Switch 2 has DLSS on its Nvidia chip, which is why both carry the <strong>ml</strong> rating. The MSI Claw 8 AI+ is the one XeSS-native machine on the ladder: its Arc 140V runs XeSS on the XMX path, including XeSS 3 multi-frame generation. It stays at <strong>ml</strong> rather than <strong>mfg</strong> because the ladder rates upscaler quality, not the presence of a multi-frame mode.
                 </div>
             </div>
         </div>
@@ -1286,6 +1501,8 @@
     //   platform    socket / ecosystem key used by the comparison engine and the
     //               platform multiplier
     //   legacy      true when the platform no longer receives current releases
+    //   added       ISO date (YYYY-MM-DD) the entry joined the list; shows a "New"
+    //               badge beside the name for UPDATED_BADGE_DAYS, then hides
     //   updated     ISO date (YYYY-MM-DD) of the last hardware change; shows an
     //               "Updated" badge beside the name for UPDATED_BADGE_DAYS, then hides
     //   ratingNote  optional sentence shown under the score breakdown explaining a
@@ -1683,17 +1900,26 @@
         prebuilt: { label: 'Prebuilt', cls: 'prebuilt-tag' }
     };
 
-    // "Updated" badge: shown beside the name for this many days after `updated`, then hidden.
+    // Dated badges: "New" (from `added`) and "Updated" (from `updated`) each show beside
+    // the name for this many days after their date, then hide themselves.
     const UPDATED_BADGE_DAYS = 60;
 
-    function renderUpdatedBadge(s) {
-        if (!s.updated) return '';
-        const when = new Date(s.updated + 'T00:00:00');
+    function renderDatedBadge(isoDate, cls, text, titlePrefix) {
+        if (!isoDate) return '';
+        const when = new Date(isoDate + 'T00:00:00');
         if (isNaN(when)) return '';
         const ageDays = (Date.now() - when.getTime()) / 86400000;
         if (ageDays < 0 || ageDays > UPDATED_BADGE_DAYS) return '';
         const label = when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        return ` <span class="updated-tag" title="Hardware updated ${label}">Updated</span>`;
+        return ` <span class="${cls}" title="${titlePrefix} ${label}">${text}</span>`;
+    }
+
+    function renderNewBadge(s) {
+        return renderDatedBadge(s.added, 'new-tag', 'New', 'Added to the list');
+    }
+
+    function renderUpdatedBadge(s) {
+        return renderDatedBadge(s.updated, 'updated-tag', 'Updated', 'Hardware updated');
     }
 
     function escapeHtml(value) {
@@ -1754,7 +1980,7 @@
         return `
                 <tr class="system-row" aria-expanded="false" data-target="${s.id}" data-id="${s.id}" data-name="${escapeHtml(s.name)}" data-cpu="${escapeHtml(s.cpu)}" data-gpu="${escapeHtml(s.gpuRef)}" data-ram="${s.memory}GB" data-score="${s.score}" data-platform="${s.platform}" data-cpu-tier="${s.cpuTier}">
                     <td class="rank"><span class="row-chevron" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l5 5 5-5"/></svg></span>${rankLabel}</td>
-                    <td class="name-cell">${escapeHtml(s.name)}${badge}${renderUpdatedBadge(s)}</td>
+                    <td class="name-cell">${escapeHtml(s.name)}${badge}${renderNewBadge(s)}${renderUpdatedBadge(s)}</td>
                     <td class="specs"><span class="spec-part">${escapeHtml(s.cpu)}</span> <span class="spec-sep">·</span> <span class="spec-part">${escapeHtml(s.gpu)}</span> <span class="spec-sep">·</span> <span class="spec-part">${memoryLabel}</span></td>
                     <td class="vram-cell">${renderVramCell(s)}</td>
                     <td class="score-cell"><span class="score-badge">${s.score}</span></td>
