@@ -1293,6 +1293,8 @@
         if (name.includes("xbox series x")) return "16 GB";
         if (name.includes("xbox series s")) return "10 GB";
         if (name.includes("steam deck")) return "16 GB";
+        if (name.includes("xbox ally x")) return "24 GB";
+        if (name.includes("xbox ally")) return "16 GB";
         if (name.includes("switch 2")) return "12 GB";
         if (name.includes("nintendo switch") || name.includes("switch")) return "4 GB";
         if (name.includes("msi claw") || name.includes("arc 140v")) return "16 GB";
@@ -1499,7 +1501,14 @@
     //   vram        dedicated graphics memory in GB (for unified systems, the shared pool)
     //   memory      system memory in GB; memoryType e.g. 'DDR4'; unified = one shared pool
     //   platform    socket / ecosystem key used by the comparison engine and the
-    //               platform multiplier
+    //               platform multiplier:
+    //                 'am5' / 'am5-x3d'      AM5, DDR5
+    //                 'am4' / 'am4-x3d'      AM4 on Ryzen 5000 (drop-in X3D available)
+    //                 'am4-3000'             AM4 on Ryzen 2000 / 3000 (X3D drop-in after a BIOS flash)
+    //                 'intel-9th'            LGA1151 8th / 9th gen (dead socket)
+    //                 'legacy-intel'         older dead Intel sockets
+    //                 'intel-1700'           LGA1700 12th–14th gen (dead socket, 14th gen drop-in only)
+    //                 'console' / 'handheld' / 'prebuilt'
     //   legacy      true when the platform no longer receives current releases
     //   added       ISO date (YYYY-MM-DD) the entry joined the list; shows a "New"
     //               badge beside the name for UPDATED_BADGE_DAYS, then hides
@@ -1536,7 +1545,7 @@
         legacyPenalty: 0.80,            // platforms no longer receiving current releases
         curve: 2.8,                     // score = 100 × (1 − (1 − P_rel)^curve)
         upscaler: { mfg: 1.04, fg: 1.02, ml: 1.00, fsr: 0.98, none: 0.92 },
-        platform: { 'am5': 1.02, 'am5-x3d': 1.02, 'intel-9th': 0.99, 'legacy-intel': 0.99 }
+        platform: { 'am5': 1.02, 'am5-x3d': 1.02, 'intel-9th': 0.99, 'legacy-intel': 0.99, 'intel-1700': 0.99 }
     };
 
     function scoreSystem(s) {
@@ -1833,6 +1842,18 @@
             upgrade: "Obsolescence is absolute; requires a complete system change to modern platforms to access current generation software."
         },
         {
+            id: "rog-xbox-ally-x", name: "ROG Xbox Ally X", deviceClass: "handheld",
+            cpu: "Ryzen AI Z2 Extreme (Zen 5 8-core)", cpuIndex: 50, cpuTier: 0,
+            gpu: "RDNA 3.5 16 CU Radeon 890M (~ GTX 1650 Super)", gpuRef: "GTX 1650 Super Custom", upscaler: "fsr",
+            vram: 24, memory: 24, memoryType: "LPDDR5X", unified: true, platform: "handheld",
+            added: "2026-09-05",
+            ratingNote: "Rated on plugged-in output at its 35W ceiling, where the Radeon 890M lands in GTX 1650 Super territory and trades wins with the MSI Claw 8 AI+: ahead in most titles at full power, behind in the few where Intel's XeSS does the heavy lifting. The two share one effective rating; the Ally X is listed above because full-power testing more often goes its way and its Zen 5 cores hold higher 1% lows.",
+            profile: "The strongest Windows handheld on the list: a Zen 5 processor and a 16 CU Radeon 890M in a 35W envelope, booting into a full-screen Xbox interface that keeps the Windows desktop out of the way.",
+            target: "1080p Low–Medium FSR · 40–60 fps / 720p Handheld · 60 fps",
+            downside: "The CPU and GPU share one power budget, upscaling is shader FSR in most games with FSR 4 support arriving title by title, and at a launch price near a thousand dollars it costs as much as a desktop that would double its output.",
+            upgrade: "Non-modular hardware; a lower power profile stretches the battery, but moving up the ladder requires a separate desktop configuration."
+        },
+        {
             id: "msi-claw-8", name: "MSI Claw 8 AI+", deviceClass: "handheld",
             cpu: "Core Ultra 7 258V", cpuIndex: 48, cpuTier: 0,
             gpu: "Arc 140V", gpuRef: "Arc 140V", upscaler: "ml",
@@ -1841,6 +1862,29 @@
             target: "800p–1080p Low · 40–60 fps",
             downside: "Integrated mobile silicon prevents independent component upgrades.",
             upgrade: "Non-modular hardware; relies entirely on official driver optimization packages to smooth out performance."
+        },
+        {
+            id: "legion-go-s", name: "Legion Go S", deviceClass: "handheld",
+            cpu: "Ryzen Z1 Extreme (Zen 4 8-core)", cpuIndex: 46, cpuTier: 0,
+            gpu: "RDNA 3 12 CU Radeon 780M (~ GTX 1050 Ti)", gpuRef: "GTX 1050 Ti Custom", upscaler: "fsr",
+            vram: 32, memory: 32, memoryType: "LPDDR5X", unified: true, platform: "handheld",
+            ratingNote: "Rated on docked output at its full power limit, where the 780M lands between a desktop GTX 1050 and 1050 Ti; on battery it runs closer to a Steam Deck.",
+            profile: "A Windows handheld with a Zen 4 processor and a Radeon 780M integrated GPU, a clear step above the Steam Deck when docked but fighting the same power envelope.",
+            target: "800p–1080p Low · 40–60 fps",
+            downside: "The integrated graphics share the power budget with the CPU, and 32GB of shared LPDDR5X cannot make up for the small GPU.",
+            upgrade: "Non-modular hardware; moving up the ladder requires a separate desktop configuration."
+        },
+        {
+            id: "rog-xbox-ally", name: "ROG Xbox Ally", deviceClass: "handheld",
+            cpu: "Ryzen Z2 A (Zen 2 4-core)", cpuIndex: 37, cpuTier: 0,
+            gpu: "RDNA 2 8 CU (~ GTX 1050)", gpuRef: "GTX 1050 Custom", upscaler: "fsr",
+            vram: 16, memory: 16, memoryType: "LPDDR5X", unified: true, platform: "handheld",
+            added: "2026-09-05",
+            ratingNote: "Rated at parity with the Steam Deck: the same four Zen 2 cores and eight RDNA 2 compute units, and the extra 5W plugged in and faster LPDDR5X buy a few percent at most in GPU-bound scenes. Listed above the Deck because full-power testing edges it, and the 1080p panel gives FSR more to work with.",
+            profile: "Steam Deck class silicon with faster memory and a 20W plugged-in ceiling, running Windows under the full-screen Xbox interface.",
+            target: "720p–900p Low · 30–45 fps",
+            downside: "An 8 CU RDNA 2 GPU is asked to drive a 1080p panel it cannot feed natively, so most games run upscaled from 720p, and Windows overhead eats into a power budget the Steam Deck spends on the game.",
+            upgrade: "Non-modular hardware; the Ally X is the same form factor with roughly double the performance, and anything beyond that means a desktop."
         },
         {
             id: "steam-deck", name: "Steam Deck", deviceClass: "handheld",
@@ -2234,11 +2278,14 @@
         } else {
             // CPU upgrade required to match or surpass target's tier layout
             if (data.highCpuTier === 6) {
-                // Target is Dariush running a Flagship 9950X3D layout
+                // Target is running a flagship 9950X3D / 9800X3D layout
                 recAmdCpu = "Ryzen 9 9950X3D";
                 recIntelCpu = "Core Ultra 9 285K";
                 if (data.lowPlatform === 'am5') {
                     executionText = `Since you are already established on the AM5 platform socket, a direct drop-in upgrade to the flagship <strong>Ryzen 9 9950X3D</strong> is all it takes to match their processing layout. Alternatively, migrating to Intel's flagship <strong>Core Ultra 9 285K</strong> is also a top-tier upgrade pathway. `;
+                } else if (data.lowPlatform === 'intel-1700') {
+                    recIntelCpu = "Core i9-14900K";
+                    executionText = `Your LGA1700 board tops out at a drop-in <strong>Core i9-14900K</strong>, which gets you most of the way with nothing else to buy. Matching a <strong>Ryzen 9 9950X3D</strong> outright means a new platform, and at current DDR5 pricing that is a 2027 project. `;
                 } else if (data.lowPlatform === 'console' || data.lowPlatform === 'handheld' || data.lowPlatform === 'prebuilt') {
                     executionText = `To shatter your restrictive hardware bounds and securely surpass an absolute flagship setup, you must migrate completely to a standard desktop environment tracking the AMD <strong>Ryzen 9 9950X3D</strong> or Intel <strong>Core Ultra 9 285K</strong>. `;
                 } else {
@@ -2250,6 +2297,8 @@
                 recIntelCpu = "Core i9-14900K";
                 if (data.lowPlatform === 'am5') {
                     executionText = `Since you are already on the AM5 platform, dropping in the gaming king—the <strong>Ryzen 7 7800X3D</strong>—will maximize your processing thresholds. Intel's high-end <strong>Core i9-14900K</strong> represents an equivalent raw frame powerhouse. `;
+                } else if (data.lowPlatform === 'intel-1700') {
+                    executionText = `Your LGA1700 board takes a drop-in <strong>Core i9-14900K</strong> with nothing else to buy, which lands within a few percent of the <strong>Ryzen 7 7800X3D</strong> in most games. The AMD route needs a new board and DDR5, which is not a sensible buy this year. `;
                 } else if (data.lowPlatform === 'console' || data.lowPlatform === 'handheld' || data.lowPlatform === 'prebuilt') {
                     executionText = `To move out of your closed system constraints and match their high-end performance, a full move to a standard desktop PC built around the <strong>Ryzen 7 7800X3D</strong> or Intel <strong>Core i9-14900K</strong> is required. `;
                 } else {
@@ -2265,6 +2314,10 @@
                     recAmdCpu = "Ryzen 7 5700X3D";
                     recIntelCpu = "Core i5-14600K";
                     executionText = `Your old Intel socket is dead-ended, but with DDR5 pricing where it is the sensible move is a used or sale AM4 board with a 3D V-Cache <strong>Ryzen 7 5700X3D</strong>: your DDR4 carries straight over and only the board and chip change. If you are set on a brand-new platform instead, Intel's <strong>Core i5-14600K</strong> is the modern gaming equivalent. `;
+                } else if (data.lowPlatform === 'intel-1700') {
+                    recAmdCpu = "Ryzen 7 7800X3D";
+                    recIntelCpu = "Core i7-14700K";
+                    executionText = `Your LGA1700 board takes a drop-in <strong>Core i7-14700K</strong> with nothing else to buy, which is the cheap route. The AMD equivalent, a <strong>Ryzen 7 7800X3D</strong>, needs a new board and DDR5 and is better left until memory prices settle. `;
                 } else {
                     recAmdCpu = "Ryzen 7 7800X3D";
                     recIntelCpu = "Core i7-14700K";

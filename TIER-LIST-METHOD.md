@@ -64,7 +64,7 @@ Every row is an object in the `SYSTEMS` array. Scores are never typed by hand; t
 | `vram` | Dedicated graphics memory in GB. For unified systems, the size of the shared pool. |
 | `memory`, `memoryType` | System RAM in GB and type, e.g. `DDR4`, `GDDR6`, `LPDDR5X`. |
 | `unified` | `true` when CPU and GPU share one memory pool (consoles, handhelds). |
-| `platform` | `am5`, `am5-x3d`, `am4`, `am4-x3d`, `intel-9th`, `legacy-intel`, `console`, `handheld`, `prebuilt`. Drives the platform multiplier and the comparison engine's advice. |
+| `platform` | `am5`, `am5-x3d`, `am4`, `am4-x3d`, `am4-3000` (Ryzen 2000/3000 on AM4, X3D drop-in after a BIOS flash), `intel-9th`, `legacy-intel`, `intel-1700` (LGA1700 12th to 14th gen, dead socket, 14th gen drop-in only), `console`, `handheld`, `prebuilt`. Drives the platform multiplier and the comparison engine's advice. |
 | `legacy` | `true` when the platform no longer receives current releases (PS4, Xbox One, Switch 1). |
 | `added` | ISO date the entry joined the list. Shows a "New" badge beside the name for 60 days, then hides itself. Both badges can show at once. |
 | `updated` | ISO date of the last hardware change. Shows an "Updated" badge beside the name for 60 days, then hides itself. |
@@ -91,7 +91,7 @@ The reference is an RTX 5090 (100%) with a 9950X3D (100) on AM5, which scores ex
 | features | `mfg` 1.04 · `fg` 1.02 · `ml` 1.00 · `fsr` 0.98 · `none` 0.92 |
 | VRAM | `1 − 0.025 × max(0, 12 − effectiveVram)`. Effective VRAM is `vram`, or `vram × 0.75` when `unified` is true. |
 | CPU | `sqrt(cpuIndex / 100)` |
-| platform | `am5` 1.02 · `am5-x3d` 1.02 · `intel-9th` 0.99 · `legacy-intel` 0.99 · everything else 1.00 |
+| platform | `am5` 1.02 · `am5-x3d` 1.02 · `intel-9th` 0.99 · `legacy-intel` 0.99 · `intel-1700` 0.99 · everything else 1.00 |
 | RAM | 0.97 for a non-unified system with less than 32 GB, else 1.00 |
 | legacy | 0.80 when `legacy` is true, else 1.00 |
 
@@ -108,7 +108,7 @@ const SCORING = {
     legacyPenalty: 0.80,
     curve: 2.8,
     upscaler: { mfg: 1.04, fg: 1.02, ml: 1.00, fsr: 0.98, none: 0.92 },
-    platform: { 'am5': 1.02, 'am5-x3d': 1.02, 'intel-9th': 0.99, 'legacy-intel': 0.99 }
+    platform: { 'am5': 1.02, 'am5-x3d': 1.02, 'intel-9th': 0.99, 'legacy-intel': 0.99, 'intel-1700': 0.99 }
 };
 
 function scoreSystem(s) {
@@ -220,7 +220,10 @@ Values used on the original list. Extend with published 1080p gaming averages, k
 | Zen 2 8-core @ 3.85 GHz (PS5 Pro) | 55 | 0 | console |
 | Zen 2 8-core (PS5, Series X) | 52 | 0 | console |
 | Zen 2 8-core @ 3.6 GHz (Series S) | 51 | 0 | console |
+| Ryzen AI Z2 Extreme, Zen 5 8-core (ROG Xbox Ally X) | 50 | 0 | handheld |
 | Core Ultra 7 258V (MSI Claw 8 AI+) | 48 | 0 | handheld |
+| Ryzen Z1 Extreme, Zen 4 8-core (Legion Go S) | 46 | 0 | handheld |
+| Ryzen Z2 A, Zen 2 4-core (ROG Xbox Ally) | 37 | 0 | handheld |
 | Zen 2 4-core @ 3.5 GHz (Steam Deck) | 36 | 0 | handheld |
 | ARM Cortex-A78C 8-core (Switch 2) | 34 | 0 | console |
 | Jaguar 8-core @ 2.3 GHz (Xbox One X) | 18 | 0 | console |
@@ -240,10 +243,13 @@ The consoles and handhelds are what make the tiers readable, so keep them all on
 | PlayStation 5 | console | RTX 2070 Super Custom | fsr | 16 GDDR6 | yes | | 36 |
 | Steam Machine | prebuilt | RX 6600 XT Custom | fsr | 8 / 16 DDR5 | no | | 33 |
 | Xbox Series S | console | GTX 1650 Super Custom | fsr | 10 GDDR6 | yes | | 17 |
+| Legion Go S | handheld | GTX 1050 Ti Custom | fsr | 32 LPDDR5X | yes | | 12 |
 | Nintendo Switch 2 | console | GTX 1650 Custom | ml | 12 LPDDR5X | yes | | 11 |
 | Xbox One X | console | RX 580 Custom | none | 12 GDDR5 | yes | yes | 8 |
 | PlayStation 4 Pro | console | GTX 1060 Custom | none | 8 GDDR5 | yes | yes | 7 |
+| ROG Xbox Ally X | handheld | GTX 1650 Super Custom | fsr | 24 LPDDR5X | yes | | 19 |
 | MSI Claw 8 AI+ | handheld | Arc 140V | ml | 32 LPDDR5X | yes | | 19 |
+| ROG Xbox Ally | handheld | GTX 1050 Custom | fsr | 16 LPDDR5X | yes | | 8 |
 | Steam Deck | handheld | GTX 1050 Custom | fsr | 16 LPDDR5 | yes | | 8 |
 | PlayStation 4 | console | HD 7850 Custom | none | 8 GDDR5 | yes | yes | 2 |
 | Xbox One S | console | HD 7790 Custom | none | 8 DDR3 | yes | yes | 2 |
@@ -265,6 +271,8 @@ These are decisions that the formula encodes or that were settled by hand. Apply
 - **PS5 and Xbox Series X are at parity** (same gpuRef and cpuIndex) because Digital Foundry head-to-heads average within a few percent. Series X lists first because its hardware is stronger on paper. Explain this with a `ratingNote` on the Series X.
 - **Fixed platforms that testing shows below their paper spec** get a `gpuRef` that matches measured results, plus a `ratingNote` citing the source (the Steam Machine is rated just below an RX 7600 for this reason).
 - **Switch 2 sits at the top of F**, above the Xbox One X, because it has ML upscaling and runs current releases.
+- **The ROG Xbox Ally X ties the MSI Claw 8 AI+ and lists above it; the ROG Xbox Ally ties the Steam Deck and lists above it.** Both are rated on plugged-in output at their full power limit. Each carries a `ratingNote` explaining the tie and the ordering, and array order is what places them first.
+- **LGA1700 owners (`intel-1700`) get a drop-in 14th gen chip recommended** (14700K or 14900K depending on the target) rather than a platform move, for the same DDR5 reason.
 - **Use the `Custom` suffix on every console or handheld gpuRef** so the lookup treats it as shared hardware.
 - **Set `updated`** to the date of any hardware change, and `added` on every new entry, so the badges appear for 60 days.
 - **Upscaler ratings follow upscaler quality, not the presence of a frame-generation mode.** RX 7000 cards rate `ml` now that FSR 4.1 (June 2026) runs machine-learned upscaling on RDNA 3; RX 6000 and older stay `fsr`. Intel Arc, including the Arc 140V in the MSI Claw 8 AI+, stays `ml` even though XeSS 3 offers 3X/4X multi-frame generation, because `mfg` and `fg` mark the DLSS 4 and DLSS 3 quality tiers rather than the existence of a multiplier. Apply this the same way on every list.
